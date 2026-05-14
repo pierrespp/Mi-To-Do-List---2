@@ -1,0 +1,42 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # Change this to your default branch if different
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10 # Adjust version if needed
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: |
+          export BASE_PATH="/Mi-To-Do-List---2/"
+          pnpm run build
+          cp artifacts/mi-todo/dist/public/index.html artifacts/mi-todo/dist/public/404.html
+
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: artifacts/mi-todo/dist/public
+          branch: gh-pages
