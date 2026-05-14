@@ -1,6 +1,4 @@
 import { useState, useEffect, createContext, useContext } from "react";
-import { Palette } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 type Theme = "clean" | "rainbow";
 
@@ -41,16 +39,54 @@ export function useTheme() {
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
+  const isRainbow = theme === "rainbow";
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
-      <Button
-        size="lg"
-        className="rounded-full shadow-lg h-14 w-14 p-0 glass-card bg-white/80 hover:bg-white text-primary hover:scale-110 transition-all duration-300"
-        onClick={() => setTheme(theme === "clean" ? "rainbow" : "clean")}
+      <button
+        onClick={() => setTheme(isRainbow ? "clean" : "rainbow")}
+        title={isRainbow ? "Mudar para Clean" : "Mudar para Pride Kawaii"}
+        style={{
+          width: 56,
+          height: 56,
+          borderRadius: "50%",
+          border: "none",
+          cursor: "pointer",
+          position: "relative",
+          background: isRainbow
+            ? "linear-gradient(135deg, #ec4899, #a78bfa, #06b6d4)"
+            : "linear-gradient(135deg, #e0e7ff, #f3e8ff)",
+          transition: "transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease",
+          boxShadow: isRainbow
+            ? "0 0 0 3px white, 0 0 20px 4px rgba(236,72,153,0.45), 0 0 40px 8px rgba(167,139,250,0.25)"
+            : "0 4px 18px rgba(167,139,250,0.35), 0 0 0 3px white",
+        }}
+        className={isRainbow ? "orb-glow" : ""}
+        onMouseEnter={e => {
+          (e.currentTarget as HTMLElement).style.transform = "scale(1.15)";
+        }}
+        onMouseLeave={e => {
+          (e.currentTarget as HTMLElement).style.transform = "scale(1)";
+        }}
       >
-        <Palette className="w-6 h-6" />
-      </Button>
+        <span style={{ fontSize: 22, lineHeight: 1, display: "block", textAlign: "center" }}>
+          {isRainbow ? "🌈" : "🎨"}
+        </span>
+        {isRainbow && (
+          <span
+            style={{
+              position: "absolute",
+              inset: -2,
+              borderRadius: "50%",
+              background: "linear-gradient(135deg, #ec4899, #a78bfa, #06b6d4, #ec4899)",
+              backgroundSize: "200% 200%",
+              animation: "gradientShift 3s linear infinite",
+              zIndex: -1,
+              opacity: 0.4,
+            }}
+          />
+        )}
+      </button>
     </div>
   );
 }
