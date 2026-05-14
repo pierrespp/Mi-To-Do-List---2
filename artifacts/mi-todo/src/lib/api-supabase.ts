@@ -1,19 +1,56 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "./supabase";
 
+/* ─── Interfaces ────────────────────────────────────────────── */
+export interface Workspace {
+  id: number;
+  slug: string;
+  name: string;
+  createdAt: string;
+}
+
+export interface Section {
+  id: number;
+  workspaceId: number;
+  name: string;
+  emoji: string;
+  position: number;
+  createdAt: string;
+}
+
+export interface Task {
+  id: number;
+  workspaceId: number;
+  sectionId: number | null;
+  shiftId: number | null;
+  title: string;
+  completed: boolean;
+  priority: string;
+  pinned: boolean;
+  recurring: boolean;
+  archived: boolean;
+  createdAt: string;
+}
+
+export interface WorkspaceStats {
+  total: number;
+  completed: number;
+  pinned: number;
+}
+
 /* ─── Helpers ────────────────────────────────────────────────── */
-const mapWorkspace = (w: any) => ({
+const mapWorkspace = (w: any): Workspace => ({
   ...w,
   createdAt: w.created_at,
 });
 
-const mapSection = (s: any) => ({
+const mapSection = (s: any): Section => ({
   ...s,
   workspaceId: s.workspace_id,
   createdAt: s.created_at,
 });
 
-const mapTask = (t: any) => ({
+const mapTask = (t: any): Task => ({
   ...t,
   workspaceId: t.workspace_id,
   sectionId: t.section_id,
@@ -30,7 +67,7 @@ export const getGetWorkspaceStatsQueryKey = (slug: string) => ["stats", slug];
 
 /* ─── Workspaces ─────────────────────────────────────────────── */
 export function useListWorkspaces() {
-  return useQuery({
+  return useQuery<Workspace[]>({
     queryKey: getListWorkspacesQueryKey(),
     queryFn: async () => {
       const { data, error } = await supabase
@@ -38,7 +75,7 @@ export function useListWorkspaces() {
         .select("*")
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data.map(mapWorkspace);
+      return (data || []).map(mapWorkspace);
     },
   });
 }
@@ -54,7 +91,6 @@ export function useCreateWorkspace() {
         .single();
       if (error) throw error;
 
-      // Create default sections
       const defaultSections = [
         { name: "Tarefas do Dia", emoji: "☀️", position: 0, workspace_id: workspace.id },
         { name: "Importantes", emoji: "⭐", position: 1, workspace_id: workspace.id },
@@ -71,7 +107,7 @@ export function useCreateWorkspace() {
 }
 
 export function useGetWorkspace(slug: string, options?: any) {
-  return useQuery({
+  return useQuery<Workspace>({
     queryKey: getGetWorkspaceQueryKey(slug),
     queryFn: async () => {
       const { data, error } = await supabase
@@ -88,7 +124,7 @@ export function useGetWorkspace(slug: string, options?: any) {
 
 /* ─── Sections ───────────────────────────────────────────────── */
 export function useListSections(slug: string, options?: any) {
-  return useQuery({
+  return useQuery<Section[]>({
     queryKey: getListSectionsQueryKey(slug),
     queryFn: async () => {
       const { data: workspace } = await supabase
@@ -105,7 +141,7 @@ export function useListSections(slug: string, options?: any) {
         .eq("workspace_id", workspace.id)
         .order("position", { ascending: true });
       if (error) throw error;
-      return data.map(mapSection);
+      return (data || []).map(mapSection);
     },
     ...options?.query,
   });
@@ -143,7 +179,7 @@ export function useCreateSection() {
 
 /* ─── Tasks ─────────────────────────────────────────────────── */
 export function useListTasks(slug: string, options?: any) {
-  return useQuery({
+  return useQuery<Task[]>({
     queryKey: getListTasksQueryKey(slug),
     queryFn: async () => {
       const { data: workspace } = await supabase
@@ -161,7 +197,7 @@ export function useListTasks(slug: string, options?: any) {
         .eq("archived", false)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data.map(mapTask);
+      return (data || []).map(mapTask);
     },
     ...options?.query,
   });
@@ -249,7 +285,7 @@ export function useDeleteTask() {
 
 /* ─── Stats ─────────────────────────────────────────────────── */
 export function useGetWorkspaceStats(slug: string, options?: any) {
-  return useQuery({
+  return useQuery<WorkspaceStats>({
     queryKey: getGetWorkspaceStatsQueryKey(slug),
     queryFn: async () => {
       const { data: workspace } = await supabase
@@ -291,21 +327,18 @@ export function useRestartShift() {
       
       if (!workspace) throw new Error("Workspace not found");
 
-      // Archive current tasks
       await supabase
         .from("tasks")
         .update({ archived: true })
         .eq("workspace_id", workspace.id)
         .eq("archived", false);
 
-      // Create a new shift record
       const { data: shift } = await supabase
         .from("shifts")
         .insert({ workspace_id: workspace.id })
         .select()
         .single();
 
-      // Respawn recurring tasks
       const { data: recurringTasks } = await supabase
         .from("tasks")
         .select("*")
