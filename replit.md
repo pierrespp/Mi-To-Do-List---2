@@ -1,44 +1,63 @@
-# [Project name]
+# Mi To Do List
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A personal Kawaii Pride / Queer Aesthetic to-do list app with workspaces, sections, tasks, shift cycles, and two beautiful themes.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/api-server run dev` — run the API server (port 8080)
+- `pnpm --filter @workspace/mi-todo run dev` — run the frontend (port 21843)
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
 - Required env: `DATABASE_URL` — Postgres connection string
+- Required env: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` — Supabase project (currently unused by backend, available for frontend use)
 
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
+- Frontend: React + Vite + TailwindCSS + Nunito font + Framer Motion
 - API: Express 5
-- DB: PostgreSQL + Drizzle ORM
+- DB: PostgreSQL + Drizzle ORM (Replit managed)
 - Validation: Zod (`zod/v4`), `drizzle-zod`
 - API codegen: Orval (from OpenAPI spec)
 - Build: esbuild (CJS bundle)
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `lib/api-spec/openapi.yaml` — source of truth for all API contracts
+- `lib/db/src/schema/index.ts` — DB schema (workspaces, sections, tasks, shifts)
+- `artifacts/api-server/src/routes/` — route handlers (workspaces, sections, tasks, shifts)
+- `artifacts/mi-todo/src/pages/` — frontend pages (Home, WorkspacePage)
+- `artifacts/mi-todo/src/index.css` — theme variables (`:root` = Clean Pride, `.theme-rainbow` = Soft Rainbow)
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Single-user, no authentication — workspaces are identified by URL slug (`/w/nome-da-lista`)
+- Shift system: tasks are archived and recurring tasks re-spawned on "Reiniciar Turno"
+- Two CSS themes toggled by adding `.theme-rainbow` class to `<html>` — instant swap, no reload
+- Frontend filter by section is client-side (all tasks fetched per workspace, filtered in memory)
+- Default sections (Tarefas do Dia, Importantes, Fechamento) auto-created with each new workspace
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Workspaces at `/w/:slug` — each has its own sections, tasks, and shift cycle
+- Sidebar with section navigation, stats (completed/pinned), and ✨ Reiniciar Turno button
+- Tasks: create inline (Enter), complete/delete, priority badges, pin + recurring indicators
+- Theme switcher (palette icon, bottom right): Soft Rainbow ↔ Clean Pride
+- "Reiniciar Turno": archives all tasks, spawns recurring tasks into new shift
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Visual-first: kawaii, premium, queer aesthetic is top priority
+- Keep files small and focused — avoid overengineering
+- Portuguese UI labels preferred (Tarefas do Dia, Reiniciar Turno, etc.)
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Always run `pnpm --filter @workspace/api-spec run codegen` after changing `openapi.yaml`
+- Operations with both path AND query params can cause Orval naming collisions — avoid query params on routes that already have path params or rename the operationId
+- The DB is Replit-managed PostgreSQL — do NOT use Supabase DB for persistence
 
 ## Pointers
 

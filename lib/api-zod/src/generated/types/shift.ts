@@ -6,6 +6,10 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export interface HealthStatus {
-  status: string;
+export interface Shift {
+  id: number;
+  workspaceId: number;
+  startedAt: Date;
+  /** @nullable */
+  endedAt?: Date | null;
 }
