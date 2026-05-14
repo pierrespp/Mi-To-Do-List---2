@@ -1,0 +1,322 @@
+# Mi To Do List — Rebuild Prompt
+
+Crie um aplicativo web chamado “Mi To Do List”.
+
+O app deve ser uma To-Do List moderna inspirada no Microsoft To Do, porém com estética extremamente Kawaii Pride / Queer Aesthetic premium.
+
+O sistema é pessoal (single-user), simples, intuitivo e extremamente bonito visualmente. NÃO transformar em sistema corporativo complexo.
+
+---
+
+# Stack Obrigatória
+
+* React + Vite
+* TypeScript
+* TailwindCSS
+* Zustand
+* Supabase
+
+---
+
+# Arquitetura (IMPORTANTE)
+
+Quero POUCOS arquivos.
+
+Evite:
+
+* excesso de componentes
+* abstrações desnecessárias
+* múltiplas camadas complexas
+* overengineering
+
+Objetivo:
+
+* código simples
+* fácil de editar
+* fácil de manter
+* visual forte
+* lógica clara
+
+Preferência:
+
+* poucos componentes grandes
+* estrutura direta
+* mínima complexidade possível
+
+---
+
+# Funcionalidades Principais
+
+## 1. Workspaces
+
+Usar rotas dinâmicas:
+
+```bash id="eoqf3x"
+/w/nome-da-lista
+```
+
+Cada workspace possui:
+
+* suas próprias tarefas
+* suas próprias seções
+* seu próprio ciclo de turno
+
+Sem autenticação.
+
+---
+
+## 2. Seções
+
+As tarefas devem ficar organizadas em seções como:
+
+* 🌙 Fechamento
+* 💖 Tarefas do Dia
+* ⭐ Importantes
+
+As seções devem aparecer em uma sidebar moderna e bonita.
+
+---
+
+## 3. Tasks
+
+Cada tarefa deve possuir:
+
+* título
+* concluída ou não
+* prioridade
+* seção
+* pin opcional
+
+A interação deve ser extremamente fluida.
+
+---
+
+## 4. Turnos
+
+Deve existir um botão:
+
+```txt id="fx0hy9"
+✨ Reiniciar Turno
+```
+
+Ao clicar:
+
+* tarefas atuais são arquivadas
+* um novo turno é criado
+* tarefas recorrentes reaparecem automaticamente
+
+---
+
+## 5. Tarefas Recorrentes
+
+O usuário pode marcar tarefas como recorrentes.
+
+Essas tarefas:
+
+* reaparecem automaticamente no próximo turno
+* ficam salvas no Supabase
+
+---
+
+# Banco de Dados
+
+Use Supabase.
+
+Estrutura simples:
+
+* workspaces
+* sections
+* tasks
+* recurring_tasks
+* shifts
+
+Sem arquitetura exagerada.
+
+Sem autenticação.
+
+---
+
+# Design Visual (PRIORIDADE MÁXIMA)
+
+O app deve parecer:
+
+* fofo
+* premium
+* queer
+* vibrante
+* aconchegante
+* estiloso
+* moderno
+
+NÃO quero visual corporativo frio.
+
+---
+
+# Estética Obrigatória
+
+## Inspirações
+
+* Microsoft To Do
+* Kawaii UI
+* Queer Aesthetic
+* Glassmorphism
+* Soft modern UI
+* HUD futurista fofo
+* Interfaces minimalistas premium
+* Pinterest aesthetic
+
+---
+
+# Paleta
+
+Use:
+
+* hot pink
+* lilás suave
+* cyan pastel
+* rainbow gradients suaves
+* branco translúcido
+* blur glassmorphism
+
+---
+
+# Componentes Visuais
+
+## Cards
+
+* vidro fosco
+* transparência
+* blur
+* brilho suave
+
+## Bordas
+
+* MUITO arredondadas
+* estilo bubble/kawaii
+
+## Sombras
+
+* glow suave
+* profundidade elegante
+
+## Background
+
+Adicionar:
+
+* gradientes suaves animados
+* estrelas pequenas
+* brilhos discretos
+* elementos kawaii leves
+
+---
+
+# Ícones e Elementos
+
+Usar muitos:
+
+* 💖
+* ✨
+* 🌈
+* ⭐
+* 🦄
+* ☁️
+* 🎀
+
+Usar lucide-react + emojis decorativos.
+
+---
+
+# Microinterações
+
+Ao completar tarefa:
+
+* brilho
+* sparkle
+* glitter suave
+* animação delicada
+
+Hover:
+
+* glow leve
+* escala sutil
+* blur refinado
+
+Transições:
+
+* suaves
+* fluidas
+* modernas
+
+---
+
+# Temas
+
+Adicionar botão flutuante para alternar temas:
+
+## Tema 1 — Soft Rainbow
+
+Pastel, claro, dreamy, extremamente kawaii.
+
+## Tema 2 — Clean Pride
+
+Mais profissional, elegante e minimalista.
+
+Características:
+
+* fundo claro sofisticado
+* menos neon
+* tons suaves de rosa, lilás e azul
+* visual clean premium
+* estética moderna estilo Notion + glassmorphism
+* ainda queer/kawaii, porém mais discreto e refinado
+
+A troca deve ser instantânea.
+
+---
+
+# UX
+
+O app deve ser:
+
+* rápido
+* intuitivo
+* agradável
+* divertido de usar
+
+Precisa parecer:
+“uma ferramenta feita com carinho”.
+
+---
+
+# IMPORTANTE
+
+Prioridade:
+
+1. Visual incrível
+2. Fluidez
+3. Simplicidade
+4. Facilidade de manutenção
+
+NÃO criar:
+
+* dashboard complexo
+* múltiplas páginas
+* sistema enterprise
+* arquitetura exagerada
+* centenas de arquivos
+
+Quero algo compacto, bonito e funcional.
+
+---
+
+# Entrega Esperada
+
+Gerar:
+
+* aplicação completa
+* responsiva
+* visualmente impactante
+* funcional com Supabase
+* fácil de continuar editando depois
+
+O resultado final deve parecer um app premium indie queer/kawaii moderno.

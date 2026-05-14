@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Mi To Do List"
+version = "1.0.0"
+id = "artifacts/mi-todo"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21843
+
+[services.development]
+run = "pnpm --filter @workspace/mi-todo run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/mi-todo", "run", "build" ]
+publicDir = "artifacts/mi-todo/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21843"
+BASE_PATH = "/"
