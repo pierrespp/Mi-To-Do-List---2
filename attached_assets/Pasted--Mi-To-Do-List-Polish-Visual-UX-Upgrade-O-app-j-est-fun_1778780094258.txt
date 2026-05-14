@@ -1,0 +1,380 @@
+# Mi To Do List — Polish Visual + UX Upgrade
+
+O app já está funcionando e a base visual está ótima.
+Agora quero uma grande melhoria de UX/UI focada em identidade visual, profundidade, atmosfera kawaii e sensação de produto premium.
+
+IMPORTANTE:
+
+* NÃO mudar a arquitetura atual
+* NÃO quebrar Zustand/Supabase
+* NÃO recriar o projeto
+* NÃO criar dezenas de arquivos desnecessários
+* O foco é POLISH VISUAL + UX
+* Manter o código simples e organizado
+
+---
+
+# Estrutura de Temas
+
+O app possui 2 temas:
+
+## Tema 1 — Pride Kawaii
+
+Esse deve ser EXTREMAMENTE:
+
+* queer
+* kawaii
+* vibrante
+* cheio de personalidade
+* fofo
+* visualmente impactante
+
+Referências:
+
+* Sanrio
+* Kawaii UI
+* Pride aesthetic
+* pastel cyber aesthetic
+* Mi To Do
+* planner feminino premium
+* widgets fofinhos de iPad
+
+## Tema 2 — Clean Professional
+
+Esse deve continuar:
+
+* clean
+* elegante
+* minimalista
+* profissional
+* suave
+* organizado
+
+As mudanças mais intensas devem afetar principalmente o tema Pride Kawaii.
+
+---
+
+# 1. Melhorias na aba “All Tasks”
+
+Na aba “All Tasks”, cada tarefa deve mostrar visualmente de qual seção ela veio.
+
+Exemplo:
+
+* 💖 Tarefas do Dia
+* ⭐ Importantes
+* 🌙 Fechamento
+
+## Implementação Visual
+
+Adicionar um badge/chip em cada task:
+
+* pequeno
+* arredondado (“pill”)
+* glassmorphism
+* colorido conforme a seção
+* com emoji/ícone kawaii
+
+Exemplos:
+
+* Tarefas do Dia → 💖 rosa
+* Importantes → ⭐ amarelo
+* Fechamento → 🌙 lilás escuro
+
+## Regras
+
+* Isso aparece APENAS em “All Tasks”
+* Nas seções individuais não precisa mostrar
+* A informação vem da `section_id`
+* Cada seção deve possuir:
+
+  * nome
+  * cor
+  * emoji/ícone
+
+## Extra (opcional mas recomendado)
+
+Na lista “All Tasks”:
+
+* agrupar tarefas visualmente por seção
+  OU
+* adicionar divisórias estilizadas entre grupos
+
+---
+
+# 2. Cards de tarefas mais premium
+
+Os cards atuais ainda parecem simples.
+
+Quero:
+
+* mais profundidade
+* aparência de cartão premium
+* mais vida visual
+
+Adicionar:
+
+* blur suave
+* glow rosa/ciano
+* hover com lift
+* borda translúcida
+* sombras coloridas
+* gradientes suaves
+* brilho interno leve
+
+Melhorar:
+
+* checkbox
+* título
+* badges
+* prioridade
+* espaçamento
+
+Os cards devem parecer widgets premium de iPad.
+
+---
+
+# 3. Mascote oficial do app
+
+Adicionar um mascote kawaii recorrente.
+
+Pode ser:
+
+* ursinho
+* coelhinho
+* unicórnio
+* mascote estilo Sanrio
+
+Ele pode:
+
+* aparecer no empty state
+* aparecer em cantos da interface
+* reagir ao completar tarefas
+* comemorar progresso
+* trocar expressão conforme conclusão das tasks
+
+IMPORTANTE:
+
+* não atrapalhar a usabilidade
+* usar opacidade baixa quando decorativo
+
+---
+
+# 4. Fundo mais vivo
+
+O fundo atualmente está muito plano.
+
+Adicionar:
+
+* blobs gradientes suaves
+* partículas flutuando
+* estrelas transparentes
+* brilhos lentos
+* sparkles suaves
+* elementos decorativos com baixa opacidade
+
+Quero sensação de:
+
+* wallpaper vivo
+* HUD kawaii premium
+* interface mágica moderna
+
+---
+
+# 5. Sidebar mais rica
+
+A sidebar está muito vazia visualmente.
+
+Adicionar:
+
+* mini calendário
+* progresso circular
+* streak do dia
+* quote fofinha
+* mascote pequeno
+* pequenos widgets decorativos
+
+Exemplo:
+“You’re doing amazing ✨”
+
+---
+
+# 6. Melhorar Empty States
+
+O “No tasks yet” está simples demais.
+
+Transformar em:
+
+* ilustração kawaii
+* mascote
+* sparkles animados
+* estrelas
+* mensagem mais amigável
+* botão fofo
+
+Exemplo:
+“Your magical task board is waiting ✨”
+
+---
+
+# 7. Barra de progresso premium
+
+Melhorar MUITO a barra de progresso.
+
+Adicionar:
+
+* gradiente animado
+* glow
+* brilho deslizando
+* animação suave
+* porcentagem elegante
+* efeito glassmorphism
+
+---
+
+# 8. Melhorar botão flutuante do tema
+
+O botão inferior direito está muito simples.
+
+Transformar em:
+
+* orb brilhante
+* botão magnético
+* animação suave
+* glow
+* hover premium
+
+Opcional:
+
+* menu radial elegante
+
+---
+
+# 9. Mais profundidade visual
+
+A interface ainda parece plana.
+
+Adicionar:
+
+* camadas
+* sombras coloridas
+* elementos sobrepostos
+* glow atrás dos cards
+* blur de fundo
+* profundidade visual
+
+Quero sensação de:
+
+* app premium real
+* UI moderna de tablet
+
+---
+
+# 10. Pequenas ilustrações SVG
+
+Adicionar detalhes pequenos pela interface:
+
+* estrelas
+* corações
+* nuvens
+* arco-íris minimalistas
+* sparkles
+* adesivos kawaii
+
+Sem exagerar.
+Somente detalhes para enriquecer visualmente.
+
+---
+
+# 11. Animação ao concluir tarefas
+
+Ao completar uma tarefa:
+
+* glitter
+* sparkle
+* glow
+* deslize suave
+* badge brilhando
+* mascote reagindo
+
+Tudo rápido, suave e satisfatório.
+
+---
+
+# 12. Seção “Importantes” especial
+
+A seção “Importantes” precisa parecer realmente importante.
+
+Adicionar:
+
+* borda dourada
+* glow especial
+* ícone maior
+* destaque visual
+* badge premium
+
+---
+
+# 13. Tipografia mais impactante
+
+Melhorar títulos e headers:
+
+* gradiente no texto
+* glow suave
+* sombra translúcida
+* peso maior
+* aparência moderna
+
+---
+
+# 14. Sombras coloridas
+
+Evitar sombras pretas padrão.
+
+Usar:
+
+* rosa
+* lilás
+* azul bebê
+* ciano
+
+Isso é MUITO importante para a estética queer/kawaii.
+
+---
+
+# 15. Micro-animações premium
+
+Adicionar:
+
+* easing suave
+* cubic-bezier premium
+* hover divertido
+* bounce leve
+* transições suaves
+* animações rápidas mas elegantes
+
+Nada exagerado.
+Tudo deve parecer premium.
+
+---
+
+# IMPORTANTE FINAL
+
+O app NÃO deve:
+
+* perder performance
+* ficar poluído
+* virar uma bagunça visual
+* quebrar funcionalidades
+* perder usabilidade
+
+Objetivo:
+Transformar o “Mi To Do List” em um app:
+
+* extremamente memorável
+* fofo
+* premium
+* estiloso
+* queer
+* moderno
+* cheio de personalidade
+* mas ainda intuitivo e agradável de usar.
