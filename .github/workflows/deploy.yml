@@ -3,10 +3,12 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main # Change this to your default branch if different
+      - main
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build-and-deploy:
@@ -23,7 +25,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10 # Adjust version if needed
+          version: 10
 
       - name: Install dependencies
         run: pnpm install
@@ -36,11 +38,14 @@ jobs:
           pnpm --filter @workspace/mi-todo run build
           cp artifacts/mi-todo/dist/public/index.html artifacts/mi-todo/dist/public/404.html
 
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
 
-
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: artifacts/mi-todo/dist/public
 
       - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          folder: artifacts/mi-todo/dist/public
-          branch: gh-pages
+        id: deployment
+        uses: actions/deploy-pages@v4
