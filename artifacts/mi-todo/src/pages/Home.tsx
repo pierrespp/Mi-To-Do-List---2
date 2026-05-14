@@ -1,4 +1,4 @@
-import { useListWorkspaces, useCreateWorkspace, getListWorkspacesQueryKey } from "@workspace/api-client-react";
+import { useListWorkspaces, useCreateWorkspace, getListWorkspacesQueryKey } from "@/lib/api-supabase";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

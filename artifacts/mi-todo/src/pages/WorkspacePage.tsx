@@ -12,7 +12,7 @@ import {
   getListTasksQueryKey,
   getGetWorkspaceStatsQueryKey,
   getListSectionsQueryKey,
-} from "@workspace/api-client-react";
+} from "@/lib/api-supabase";
 import { useState, KeyboardEvent } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Check, Plus, Trash2, Heart, Star, Sparkles, Loader2, Pin, Calendar, AlertCircle, RefreshCw } from "lucide-react";
