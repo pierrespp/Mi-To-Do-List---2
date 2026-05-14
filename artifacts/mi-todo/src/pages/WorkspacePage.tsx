@@ -133,6 +133,48 @@ function HeartKawaii({ size = 44 }: { size?: number }) {
   );
 }
 
+/* ─── Particle burst on task completion ──────────────────────── */
+const PARTICLES = [
+  { anim: "ps0", color: "#ec4899" }, { anim: "ps1", color: "#fbbf24" },
+  { anim: "ps2", color: "#a78bfa" }, { anim: "ps3", color: "#06b6d4" },
+  { anim: "ps4", color: "#f9a8d4" }, { anim: "ps5", color: "#fde68a" },
+  { anim: "ps6", color: "#c4b5fd" }, { anim: "ps7", color: "#67e8f9" },
+];
+
+function SparkBurst() {
+  return (
+    <div style={{
+      position: "absolute", left: "50%", top: "50%",
+      width: 0, height: 0,
+      pointerEvents: "none", zIndex: 50,
+    }}>
+      {PARTICLES.map((p, i) => (
+        <div key={i} style={{
+          position: "absolute",
+          width: i % 2 === 0 ? 7 : 5,
+          height: i % 2 === 0 ? 7 : 5,
+          borderRadius: "50%",
+          background: p.color,
+          marginLeft: i % 2 === 0 ? -3.5 : -2.5,
+          marginTop:  i % 2 === 0 ? -3.5 : -2.5,
+          animation: `${p.anim} 0.55s cubic-bezier(0.22,1,0.36,1) forwards`,
+          animationDelay: `${i * 0.018}s`,
+          boxShadow: `0 0 5px ${p.color}`,
+          opacity: 1,
+        }} />
+      ))}
+      {/* Central sparkle emoji */}
+      <span style={{
+        position: "absolute",
+        fontSize: 14,
+        marginLeft: -7, marginTop: -7,
+        animation: "sparkle 0.55s ease-out forwards",
+        pointerEvents: "none",
+      }}>✨</span>
+    </div>
+  );
+}
+
 /* ─── Progress Ring ───────────────────────────────────────────── */
 function ProgressRing({ value, total, size = 72 }: { value: number; total: number; size?: number }) {
   const pct = total > 0 ? value / total : 0;
@@ -355,6 +397,7 @@ export default function WorkspacePage() {
   const [newSectionName, setNewSectionName] = useState("");
   const [isAddingSection, setIsAddingSection] = useState(false);
   const [completingId, setCompletingId] = useState<number | null>(null);
+  const [mascotMood, setMascotMood] = useState<"idle" | "cheer">("idle");
 
   const createTask = useCreateTask();
   const updateTask = useUpdateTask();
@@ -395,6 +438,8 @@ export default function WorkspacePage() {
     if (!completed) {
       setCompletingId(taskId);
       setTimeout(() => setCompletingId(null), 750);
+      setMascotMood("cheer");
+      setTimeout(() => setMascotMood("idle"), 2200);
     }
     updateTask.mutate({ slug, taskId, data: { completed: !completed } }, {
       onSuccess: () => {
@@ -547,11 +592,18 @@ export default function WorkspacePage() {
           )}
         </div>
 
-        {/* Sidebar mascot */}
+        {/* Sidebar mascot — reacts when a task is completed */}
         {isRainbow && (
           <div className="flex flex-col items-center gap-2 mt-4 mb-2">
-            <div className="float-animation" style={{ opacity: 0.7 }}>
-              <KawaiiMascot size={52} mood="idle" />
+            <div
+              className="float-animation"
+              style={{
+                opacity: 0.82,
+                transition: "transform 0.3s cubic-bezier(0.34,1.56,0.64,1)",
+                transform: mascotMood === "cheer" ? "scale(1.18) translateY(-4px)" : "scale(1)",
+              }}
+            >
+              <KawaiiMascot size={52} mood={mascotMood} />
             </div>
             <div className="flex gap-1 text-base" style={{ opacity: 0.4 }}>
               {["💜","🌸","💜"].map((s, i) => (
@@ -702,18 +754,83 @@ export default function WorkspacePage() {
                       if (isRainbow && pal && !task.completed) (e.currentTarget as HTMLElement).style.boxShadow = `0 4px 20px ${pal.glow.replace("0.45","0.18")}, 0 1px 4px rgba(0,0,0,0.04)`;
                     }}
                   >
-                    {/* Checkbox */}
-                    <button onClick={() => handleToggleTask(task.id, task.completed)}
-                      className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all flex-shrink-0 ${
-                        task.completed ? "border-transparent text-white" : "border-primary/40 hover:border-primary text-transparent hover:bg-primary/10"
-                      } ${isCompleting ? "check-bounce" : ""}`}
-                      style={task.completed ? {
-                        background: "linear-gradient(135deg, #ec4899, #a78bfa)",
-                        boxShadow: isRainbow ? "0 0 10px rgba(236,72,153,0.4)" : undefined,
-                      } : undefined}
-                    >
-                      <Check className={`w-4 h-4 ${task.completed ? "opacity-100" : "opacity-0"}`} />
-                    </button>
+                    {/* Premium Checkbox */}
+                    <div style={{ position: "relative", flexShrink: 0 }}>
+                      <button
+                        onClick={() => handleToggleTask(task.id, task.completed)}
+                        className={isCompleting ? "check-bounce" : ""}
+                        style={{
+                          width: 34, height: 34,
+                          borderRadius: "50%",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          cursor: "pointer",
+                          position: "relative",
+                          overflow: "visible",
+                          border: task.completed ? "none" : "2.5px solid rgba(236,72,153,0.35)",
+                          background: task.completed
+                            ? "linear-gradient(135deg, #ec4899, #a78bfa)"
+                            : "rgba(255,255,255,0.4)",
+                          boxShadow: task.completed
+                            ? isRainbow
+                              ? "0 0 16px rgba(236,72,153,0.55), 0 0 32px rgba(167,139,250,0.3)"
+                              : "0 2px 10px rgba(236,72,153,0.3)"
+                            : "none",
+                          transition: "all 0.25s cubic-bezier(0.34,1.56,0.64,1)",
+                        }}
+                        onMouseEnter={e => {
+                          if (!task.completed) {
+                            const el = e.currentTarget as HTMLElement;
+                            el.style.borderColor = "#ec4899";
+                            el.style.background = "rgba(236,72,153,0.1)";
+                            el.style.transform = "scale(1.1)";
+                            el.style.boxShadow = "0 0 10px rgba(236,72,153,0.25)";
+                          }
+                        }}
+                        onMouseLeave={e => {
+                          if (!task.completed) {
+                            const el = e.currentTarget as HTMLElement;
+                            el.style.borderColor = "rgba(236,72,153,0.35)";
+                            el.style.background = "rgba(255,255,255,0.4)";
+                            el.style.transform = "";
+                            el.style.boxShadow = "none";
+                          }
+                        }}
+                      >
+                        {/* Custom animated checkmark */}
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                          style={{ opacity: task.completed ? 1 : 0, transition: "opacity 0.2s" }}>
+                          <path d="M3 8.5 L6.5 12 L13 5"
+                            stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"
+                            strokeDasharray="20"
+                            strokeDashoffset={task.completed ? "0" : "20"}
+                            style={{ transition: "stroke-dashoffset 0.3s cubic-bezier(0.34,1.56,0.64,1)" }}
+                          />
+                        </svg>
+
+                        {/* Ripple ring on completion */}
+                        {isCompleting && (
+                          <span style={{
+                            position: "absolute", inset: -5,
+                            borderRadius: "50%",
+                            border: "2.5px solid #ec4899",
+                            animation: "rippleExpand 0.55s ease-out forwards",
+                            pointerEvents: "none",
+                          }} />
+                        )}
+                        {isCompleting && (
+                          <span style={{
+                            position: "absolute", inset: -10,
+                            borderRadius: "50%",
+                            border: "1.5px solid rgba(167,139,250,0.6)",
+                            animation: "rippleExpand 0.7s ease-out 0.1s forwards",
+                            pointerEvents: "none",
+                          }} />
+                        )}
+                      </button>
+
+                      {/* Particle burst — rainbow mode only */}
+                      {isCompleting && isRainbow && <SparkBurst />}
+                    </div>
 
                     {/* Title + section badge */}
                     <div className="flex-1 min-w-0">
