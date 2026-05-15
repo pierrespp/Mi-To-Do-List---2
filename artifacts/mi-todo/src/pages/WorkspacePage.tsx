@@ -13,13 +13,14 @@ import {
   getGetWorkspaceStatsQueryKey,
   getListSectionsQueryKey,
 } from "@/lib/api-supabase";
-import { useState, KeyboardEvent } from "react";
+import { useState, KeyboardEvent, useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Check, Plus, Trash2, Heart, Star, Sparkles, Loader2, Pin, Calendar, AlertCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useTheme } from "@/components/ThemeToggle";
+import { petBridge } from "../../../../src/integrations/petBridge";
 
 /* ─── Section colour palette ─────────────────────────────────── */
 const PALETTES = [
@@ -405,6 +406,15 @@ export default function WorkspacePage() {
   const createSection = useCreateSection();
   const restartShift = useRestartShift();
 
+  const hasGreeted = useRef(false);
+  useEffect(() => {
+    if (!hasGreeted.current) {
+      const pendingTaskCount = stats ? stats.total - stats.completed : undefined;
+      petBridge.appOpen({ pendingTaskCount });
+      hasGreeted.current = true;
+    }
+  }, []); // Mount only
+
   const quote = QUOTES[Math.floor(Date.now() / 86400000) % QUOTES.length];
   const sectionMap = new Map((sections ?? []).map((s, i) => [s.id, { ...s, palette: PALETTES[i % PALETTES.length] }]));
 
@@ -443,6 +453,12 @@ export default function WorkspacePage() {
     }
     updateTask.mutate({ slug, taskId, data: { completed: !completed } }, {
       onSuccess: () => {
+        if (!completed) {
+          petBridge.taskCompleted();
+          if (stats && stats.completed + 1 >= stats.total) {
+            petBridge.allTasksCompleted();
+          }
+        }
         queryClient.invalidateQueries({ queryKey: getListTasksQueryKey(slug) });
         queryClient.invalidateQueries({ queryKey: getGetWorkspaceStatsQueryKey(slug) });
       }
@@ -625,6 +641,7 @@ export default function WorkspacePage() {
             onClick={() => {
               restartShift.mutate({ slug }, {
                 onSuccess: () => {
+                  petBridge.turnRestart();
                   queryClient.invalidateQueries({ queryKey: getListTasksQueryKey(slug) });
                   queryClient.invalidateQueries({ queryKey: getGetWorkspaceStatsQueryKey(slug) });
                 }

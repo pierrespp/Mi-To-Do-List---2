@@ -51,4 +51,10 @@ Thumbs.db
 # Assets & Agent
 attached_assets/
 .agent/
+.gemini/
+
+# Security
+.env
+.env.local
+.env.*.local
 

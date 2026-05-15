@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -19,6 +20,9 @@ function Router() {
   );
 }
 
+import { petBridge } from "../../../src/integrations/petBridge";
+import { PetSystemMount } from "../../../src/integrations/PetSystemMount";
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -29,6 +33,7 @@ function App() {
           </WouterRouter>
           <Toaster />
           <ThemeToggle />
+          <PetSystemMount />
         </TooltipProvider>
       </ThemeProvider>
     </QueryClientProvider>

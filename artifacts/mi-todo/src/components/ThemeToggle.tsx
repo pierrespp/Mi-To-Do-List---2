@@ -1,4 +1,5 @@
 import { useState, useEffect, createContext, useContext } from "react";
+import { petBridge } from "../../../../src/integrations/petBridge";
 
 type Theme = "clean" | "rainbow";
 
@@ -22,6 +23,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     } else {
       document.documentElement.classList.remove("theme-rainbow");
     }
+    petBridge.themeChanged(theme);
   }, [theme]);
 
   return (
