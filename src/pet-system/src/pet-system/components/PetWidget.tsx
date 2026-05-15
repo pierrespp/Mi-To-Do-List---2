@@ -74,7 +74,11 @@ export const PetWidget: React.FC = () => {
 
   /* ── 10.1: Compact default ───────────────────────────────────────── */
   React.useEffect(() => {
-    if (settings.compactDefault) {
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 1024;
+    if (settings.compactDefault || isMobile) {
+      // Force compact on mount if setting is on OR if on mobile
+      // Respecting user preference: if they explicitly want full mode, 
+      // they can toggle it, but it will default to compact on next mobile mount.
       setIsCompact(true);
     }
   }, []); // Only on mount
@@ -218,7 +222,7 @@ export const PetWidget: React.FC = () => {
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={reducedMotion ? { duration: 0 } : { type: "spring", stiffness: 260, damping: 22 }}
         className="relative flex flex-col items-center"
-        style={{ width: 220, gap: 10 }}
+        style={{ width: 'min(220px, calc(100vw - 32px))', gap: 10 }}
       >
         {/* Ambient orbs — respects presence level + reduced motion */}
         <div className="absolute pointer-events-none" style={{ inset: -50, zIndex: 0 }}>

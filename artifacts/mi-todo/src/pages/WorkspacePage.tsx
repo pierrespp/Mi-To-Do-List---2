@@ -15,7 +15,7 @@ import {
 } from "@/lib/api-supabase";
 import { useState, KeyboardEvent, useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Check, Plus, Trash2, Heart, Star, Sparkles, Loader2, Pin, Calendar, AlertCircle, RefreshCw } from "lucide-react";
+import { Check, Plus, Trash2, Heart, Star, Sparkles, Loader2, Pin, Calendar, AlertCircle, RefreshCw, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -149,7 +149,7 @@ function SparkBurst() {
       width: 0, height: 0,
       pointerEvents: "none", zIndex: 50,
     }}>
-      {PARTICLES.map((p, i) => (
+      {PARTICLES.filter((_, i) => (typeof window !== 'undefined' && window.innerWidth < 1024) ? i % 2 === 0 : true).map((p, i) => (
         <div key={i} style={{
           position: "absolute",
           width: i % 2 === 0 ? 7 : 5,
@@ -259,7 +259,7 @@ function BlobBackground() {
       }} />
 
       {/* Floating stickers */}
-      {STICKERS.map((s, i) => (
+      {STICKERS.filter((_, i) => (typeof window !== 'undefined' && window.innerWidth < 1024) ? i % 2 === 0 : true).map((s, i) => (
         <div key={i} style={{
           position: "absolute",
           top: s.top,
@@ -399,6 +399,7 @@ export default function WorkspacePage() {
   const [isAddingSection, setIsAddingSection] = useState(false);
   const [completingId, setCompletingId] = useState<number | null>(null);
   const [mascotMood, setMascotMood] = useState<"idle" | "cheer">("idle");
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const createTask = useCreateTask();
   const updateTask = useUpdateTask();
@@ -486,9 +487,45 @@ export default function WorkspacePage() {
       <BlobBackground />
       <KawaiiCornerDecos />
 
+      {/* Mobile Header */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200/50">
+        <button
+          onClick={() => setDrawerOpen(true)}
+          className="p-2 rounded-lg hover:bg-gray-100/50"
+          aria-label="Abrir menu"
+        >
+          <Menu className="w-6 h-6 text-primary" />
+        </button>
+        <span className="font-semibold text-sm truncate max-w-[200px]">
+          {selectedSectionId ? sections?.find(s => s.id === selectedSectionId)?.name : workspace?.name}
+        </span>
+        <div className="w-10" />
+      </div>
+
+      {/* Overlay escuro — só no mobile quando drawer aberto */}
+      {drawerOpen && (
+        <div
+          className="lg:hidden fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+          onClick={() => setDrawerOpen(false)}
+        />
+      )}
+
       {/* ═══════════════ SIDEBAR ═══════════════════════════════ */}
-      <div className="w-72 flex flex-col p-6 glass-sidebar border-r z-10 relative" style={{ minHeight: "100vh" }}>
+      <div className={`
+        w-72 flex flex-col p-6 glass-sidebar border-r z-50 relative
+        lg:relative lg:translate-x-0 lg:!transform-none fixed inset-y-0 left-0 transition-transform duration-300 ease-in-out
+        ${drawerOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+      `} style={{ minHeight: "100vh" }}>
         <SidebarStickers />
+
+        {/* Close button - Mobile only */}
+        <button
+          className="lg:hidden absolute top-3 right-3 p-2 text-muted-foreground hover:text-primary"
+          onClick={() => setDrawerOpen(false)}
+          aria-label="Fechar menu"
+        >
+          <X className="w-5 h-5" />
+        </button>
 
         {/* Workspace name */}
         <div className="mb-6">
@@ -550,7 +587,7 @@ export default function WorkspacePage() {
         {/* Section nav */}
         <div className="flex-1 overflow-y-auto space-y-1.5">
           <button
-            onClick={() => setSelectedSectionId(null)}
+            onClick={() => { setSelectedSectionId(null); setDrawerOpen(false); }}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left font-bold transition-all duration-200"
             style={selectedSectionId === null ? {
               background: "linear-gradient(135deg, #ec4899, #a78bfa)",
@@ -570,7 +607,7 @@ export default function WorkspacePage() {
             const isImportant = section.name.toLowerCase().includes("import");
             return (
               <button key={section.id}
-                onClick={() => setSelectedSectionId(section.id)}
+                onClick={() => { setSelectedSectionId(section.id); setDrawerOpen(false); }}
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left font-bold transition-all duration-200"
                 style={isSelected ? {
                   background: "linear-gradient(135deg, #ec4899, #a78bfa)",
@@ -597,7 +634,7 @@ export default function WorkspacePage() {
               onKeyDown={handleCreateSection}
               onBlur={() => setIsAddingSection(false)}
               placeholder="Nome da seção..."
-              className="mt-2 rounded-2xl bg-white/60 border-primary/20" />
+              className="mt-2 rounded-2xl bg-white/60 border-primary/20 text-base lg:text-sm" />
           ) : (
             <button onClick={() => setIsAddingSection(true)}
               className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left font-bold text-muted-foreground hover:text-primary transition-all mt-1"
@@ -654,7 +691,7 @@ export default function WorkspacePage() {
       </div>
 
       {/* ═══════════════ MAIN AREA ════════════════════════════ */}
-      <div className="flex-1 flex flex-col p-8 md:p-12 overflow-y-auto" style={{ position: "relative", zIndex: 1 }}>
+      <div className="flex-1 flex flex-col p-4 md:p-8 lg:p-12 pt-20 lg:pt-12 overflow-y-auto" style={{ position: "relative", zIndex: 1 }}>
         <div className="max-w-3xl w-full mx-auto space-y-8">
 
           {/* Header */}
@@ -778,6 +815,7 @@ export default function WorkspacePage() {
                         className={isCompleting ? "check-bounce" : ""}
                         style={{
                           width: 34, height: 34,
+                          minWidth: 44, minHeight: 44,
                           borderRadius: "50%",
                           display: "flex", alignItems: "center", justifyContent: "center",
                           cursor: "pointer",
@@ -900,7 +938,7 @@ export default function WorkspacePage() {
                             }
                           });
                         }}
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-muted-foreground transition-all ml-1"
+                        className="w-11 h-11 lg:w-8 lg:h-8 rounded-full flex items-center justify-center text-muted-foreground transition-all ml-1"
                         style={{ transition: "all 0.2s" }}
                         onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(239,68,68,0.1)"; (e.currentTarget as HTMLElement).style.color = "#dc2626"; }}
                         onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = ""; }}

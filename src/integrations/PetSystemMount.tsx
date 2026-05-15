@@ -12,6 +12,8 @@ export function PetSystemMount() {
     return null;
   }
 
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+
   return (
     <Suspense fallback={<div id="pet-system-loading-placeholder" style={{ display: 'none' }} />}>
       {/*
@@ -26,7 +28,7 @@ export function PetSystemMount() {
         style={{
           position: 'fixed',
           bottom: 'max(24px, env(safe-area-inset-bottom, 0px))',
-          right: 'max(120px, env(safe-area-inset-right, 0px))',
+          right: `max(${isMobile ? '16px' : '120px'}, env(safe-area-inset-right, 0px))`,
           zIndex: 9990,
           pointerEvents: 'auto',
           /* Prevent widget from being obscured by virtual keyboard */

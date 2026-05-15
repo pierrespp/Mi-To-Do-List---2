@@ -137,109 +137,96 @@ const KuroSVG: React.FC<PetSVGProps> = ({ mood }) => (
   </svg>
 );
 
-/* ─── Mochi (Cream bear) ───────────────────────────────────────────── */
-const MochiSVG: React.FC<PetSVGProps> = ({ mood }) => (
+/* ─── Pi (Pinguim) ────────────────────────────────────────────────── */
+const PiSVG: React.FC<PetSVGProps> = ({ mood }) => (
   <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ overflow: "visible" }}>
     <defs>
-      <radialGradient id="mochiBody" cx="38%" cy="30%" r="68%">
-        <stop offset="0%" stopColor="#fffbeb" />
-        <stop offset="55%" stopColor="#fef3c7" />
-        <stop offset="100%" stopColor="#fde68a" />
+      <radialGradient id="piBody" cx="38%" cy="30%" r="68%">
+        <stop offset="0%" stopColor="#2e2e4a" />
+        <stop offset="60%" stopColor="#1a1a2e" />
+        <stop offset="100%" stopColor="#0f0f1d" />
+      </radialGradient>
+      <radialGradient id="piBelly" cx="50%" cy="40%" r="60%">
+        <stop offset="0%" stopColor="#ffffff" />
+        <stop offset="100%" stopColor="#e8f4f8" />
+      </radialGradient>
+    </defs>
+    {/* Body */}
+    <ellipse cx="60" cy="70" rx="42" ry="45" fill="url(#piBody)" />
+    {/* White belly */}
+    <ellipse cx="60" cy="80" rx="28" ry="32" fill="url(#piBelly)" />
+    {/* Beak */}
+    <path d="M54 68 L60 76 L66 68 Z" fill="#f97316" />
+    {/* Eyes */}
+    <EyeSet mood={mood} cx1={43} cx2={77} cy={56} r={6} eyeColor="#0f0f1d" />
+    {/* Mouth (under beak) */}
+    <path d={MOUTHS[mood]} stroke="#f97316" strokeWidth="1.5" fill="none" strokeLinecap="round" opacity={0.6} />
+    {/* Fins */}
+    <ellipse cx="20" cy="80" rx="10" ry="18" fill="url(#piBody)" transform="rotate(15 20 80)" />
+    <ellipse cx="100" cy="80" rx="10" ry="18" fill="url(#piBody)" transform="rotate(-15 100 80)" />
+    {/* Ecstatic snow */}
+    {mood === "ecstatic" && <><text x="95" y="30" fontSize="12" fill="#bae6fd">❄</text><text x="15" y="35" fontSize="10" fill="#bae6fd">❄</text></>}
+  </svg>
+);
+
+/* ─── Mila (Raposa) ───────────────────────────────────────────────── */
+const MilaSVG: React.FC<PetSVGProps> = ({ mood }) => (
+  <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ overflow: "visible" }}>
+    <defs>
+      <radialGradient id="milaBody" cx="38%" cy="30%" r="68%">
+        <stop offset="0%" stopColor="#f48e6a" />
+        <stop offset="60%" stopColor="#e8744a" />
+        <stop offset="100%" stopColor="#c25a34" />
       </radialGradient>
     </defs>
     {/* Ears */}
-    <circle cx="28" cy="36" r="15" fill="url(#mochiBody)" />
-    <circle cx="92" cy="36" r="15" fill="url(#mochiBody)" />
-    <circle cx="28" cy="36" r="9" fill="#fde68a" opacity="0.5" />
-    <circle cx="92" cy="36" r="9" fill="#fde68a" opacity="0.5" />
-    {/* Very round body */}
-    <circle cx="60" cy="70" r="42" fill="url(#mochiBody)" />
-    {/* Belly patch */}
-    <ellipse cx="60" cy="76" rx="26" ry="22" fill="white" opacity="0.38" />
-    {/* Cheeks */}
-    <ellipse cx="26" cy="70" rx="9" ry="6" fill="#fca5a5" opacity={0.35} />
-    <ellipse cx="94" cy="70" rx="9" ry="6" fill="#fca5a5" opacity={0.35} />
-    {/* Nose */}
-    <ellipse cx="60" cy="66" rx="3" ry="2" fill="#d97706" opacity={0.6} />
-    {/* Eyes */}
-    <EyeSet mood={mood} cx1={43} cx2={77} cy={58} r={6} eyeColor="#78350f" />
-    {/* Mouth */}
-    <path d={MOUTHS[mood]} stroke="#d97706" strokeWidth="2.2" fill="none" strokeLinecap="round" opacity={0.8} />
-    {/* Sleepy zzs */}
-    {mood === "sleepy" && <><text x="90" y="30" fontSize="11" fill="#d97706" opacity="0.5">z</text><text x="99" y="20" fontSize="15" fill="#d97706" opacity="0.3">z</text></>}
-  </svg>
-);
-
-/* ─── Hoshi (Golden star) ──────────────────────────────────────────── */
-const HoshiSVG: React.FC<PetSVGProps> = ({ mood }) => (
-  <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ overflow: "visible" }}>
-    <defs>
-      <radialGradient id="hoshiBody" cx="40%" cy="30%" r="68%">
-        <stop offset="0%" stopColor="#fef9c3" />
-        <stop offset="55%" stopColor="#fbbf24" />
-        <stop offset="100%" stopColor="#d97706" />
-      </radialGradient>
-      <radialGradient id="hoshiGlow" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.4" />
-        <stop offset="100%" stopColor="#fbbf24" stopOpacity="0" />
-      </radialGradient>
-    </defs>
-    {/* Glow aura */}
-    <circle cx="60" cy="62" r="52" fill="url(#hoshiGlow)" />
-    {/* Star body */}
-    <path d="M60,20 L72,46 L100,49 L79,68 L85,96 L60,82 L35,96 L41,68 L20,49 L48,46 Z" fill="url(#hoshiBody)" />
-    {/* Inner highlight */}
-    <path d="M60,32 L68,50 L87,52 L73,64 L77,83 L60,74 L43,83 L47,64 L33,52 L52,50 Z" fill="#fef9c3" opacity="0.3" />
-    {/* Cheeks */}
-    <ellipse cx="36" cy="65" rx="7" ry="5" fill="#fca5a5" opacity={mood === "ecstatic" ? 0.7 : 0.4} />
-    <ellipse cx="84" cy="65" rx="7" ry="5" fill="#fca5a5" opacity={mood === "ecstatic" ? 0.7 : 0.4} />
-    {/* Nose */}
-    <ellipse cx="60" cy="63" rx="2.5" ry="1.8" fill="#d97706" opacity={0.6} />
-    {/* Eyes */}
-    <EyeSet mood={mood} cx1={45} cx2={75} cy={55} r={6} eyeColor="#78350f" />
-    {/* Mouth */}
-    <path d={MOUTHS[mood]} stroke="#d97706" strokeWidth="2.2" fill="none" strokeLinecap="round" />
-    {/* Sparkles for ecstatic */}
-    {mood === "ecstatic" && <><text x="4" y="24" fontSize="13" fill="#fbbf24">✦</text><text x="100" y="20" fontSize="10" fill="#fef08a">★</text></>}
-  </svg>
-);
-
-/* ─── Yuki (Blue bunny) ────────────────────────────────────────────── */
-const YukiSVG: React.FC<PetSVGProps> = ({ mood }) => (
-  <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ overflow: "visible" }}>
-    <defs>
-      <radialGradient id="yukiBody" cx="38%" cy="30%" r="68%">
-        <stop offset="0%" stopColor="#f0f9ff" />
-        <stop offset="55%" stopColor="#bae6fd" />
-        <stop offset="100%" stopColor="#7dd3fc" />
-      </radialGradient>
-    </defs>
-    {/* Tall floppy ears */}
-    <ellipse cx="38" cy="28" rx="12" ry="26" fill="url(#yukiBody)" />
-    <ellipse cx="82" cy="28" rx="12" ry="26" fill="url(#yukiBody)" />
-    {/* Pink inner ears */}
-    <ellipse cx="38" cy="30" rx="6" ry="19" fill="#fce7f3" opacity="0.7" />
-    <ellipse cx="82" cy="30" rx="6" ry="19" fill="#fce7f3" opacity="0.7" />
+    <path d="M25 45 L15 15 L50 35 Z" fill="url(#milaBody)" />
+    <path d="M95 45 L105 15 L70 35 Z" fill="url(#milaBody)" />
+    <path d="M28 42 L22 25 L42 35 Z" fill="#f5d5a0" opacity="0.6" />
+    <path d="M92 42 L98 25 L78 35 Z" fill="#f5d5a0" opacity="0.6" />
     {/* Body */}
-    <ellipse cx="60" cy="74" rx="36" ry="34" fill="url(#yukiBody)" />
-    {/* Belly */}
-    <ellipse cx="60" cy="78" rx="20" ry="18" fill="white" opacity="0.35" />
+    <ellipse cx="60" cy="72" rx="42" ry="38" fill="url(#milaBody)" />
+    {/* White snout area */}
+    <ellipse cx="60" cy="82" rx="25" ry="18" fill="#f5d5a0" opacity="0.8" />
     {/* Cheeks */}
-    <ellipse cx="28" cy="72" rx="8" ry="5" fill="#f9a8d4" opacity={0.38} />
-    <ellipse cx="92" cy="72" rx="8" ry="5" fill="#f9a8d4" opacity={0.38} />
+    <ellipse cx="30" cy="78" rx="8" ry="5" fill="#fca5a5" opacity={0.4} />
+    <ellipse cx="90" cy="78" rx="8" ry="5" fill="#fca5a5" opacity={0.4} />
     {/* Nose */}
-    <ellipse cx="60" cy="68" rx="3" ry="2" fill="#93c5fd" opacity={0.7} />
-    {/* Eyes — shy and small */}
-    <EyeSet mood={mood} cx1={46} cx2={74} cy={60} r={5.5} eyeColor="#0369a1" />
+    <ellipse cx="60" cy="75" rx="3" ry="2" fill="#c25a34" />
+    {/* Eyes */}
+    <EyeSet mood={mood} cx1={44} cx2={76} cy={62} r={6} eyeColor="#431407" />
     {/* Mouth */}
-    <path d={MOUTHS[mood]} stroke="#7dd3fc" strokeWidth="2" fill="none" strokeLinecap="round" />
-    {/* Hiding paws for sad/worried */}
-    {(mood === "worried" || mood === "sad") && (
-      <>
-        <ellipse cx="28" cy="90" rx="12" ry="8" fill="url(#yukiBody)" opacity="0.8" />
-        <ellipse cx="92" cy="90" rx="12" ry="8" fill="url(#yukiBody)" opacity="0.8" />
-      </>
-    )}
+    <path d={MOUTHS[mood]} stroke="#431407" strokeWidth="2" fill="none" strokeLinecap="round" opacity={0.7} />
+    {/* Ecstatic leaves */}
+    {mood === "ecstatic" && <><text x="100" y="25" fontSize="12" fill="#fbbf24">✦</text><text x="10" y="30" fontSize="10" fill="#fde68a">★</text></>}
+  </svg>
+);
+
+/* ─── Gabiru (Gato) ───────────────────────────────────────────────── */
+const GabiruSVG: React.FC<PetSVGProps> = ({ mood }) => (
+  <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ overflow: "visible" }}>
+    <defs>
+      <radialGradient id="gabiruBody" cx="38%" cy="30%" r="68%">
+        <stop offset="0%" stopColor="#8a9ab0" />
+        <stop offset="60%" stopColor="#6b7c93" />
+        <stop offset="100%" stopColor="#4f5b6d" />
+      </radialGradient>
+    </defs>
+    {/* Ears */}
+    <path d="M30 45 L20 20 L50 40 Z" fill="url(#gabiruBody)" />
+    <path d="M90 45 L100 20 L70 40 Z" fill="url(#gabiruBody)" />
+    {/* Body */}
+    <ellipse cx="60" cy="70" rx="40" ry="38" fill="url(#gabiruBody)" />
+    {/* Belly */}
+    <ellipse cx="60" cy="80" rx="22" ry="18" fill="#f0f4f8" opacity="0.25" />
+    {/* Eyes */}
+    <EyeSet mood={mood} cx1={44} cx2={76} cy={58} r={5.5} eyeColor="#1e293b" highlightColor="#cbd5e1" />
+    {/* Nose */}
+    <ellipse cx="60" cy="68" rx="2.5" ry="1.8" fill="#4f5b6d" opacity={0.8} />
+    {/* Mouth */}
+    <path d={MOUTHS[mood]} stroke="#1e293b" strokeWidth="1.8" fill="none" strokeLinecap="round" opacity={0.8} />
+    {/* Ecstatic paws */}
+    {mood === "ecstatic" && <><text x="98" y="28" fontSize="12" fill="#94a3b8">🐾</text><text x="10" y="32" fontSize="10" fill="#94a3b8">🐾</text></>}
   </svg>
 );
 
@@ -258,21 +245,21 @@ export const PET_DEFINITIONS: Record<PetId, PetDef> = {
     SVG: KuroSVG,
   },
   mochi: {
-    id: "mochi", name: "Mochi",
-    description: "Sonolento mas leal — reage às suas pausas ☁️",
-    primaryColor: "#fef3c7", glowColor: "rgba(253,230,138,0.35)",
-    SVG: MochiSVG,
+    id: "mochi", name: "Pi",
+    description: "Elegante e focado — um pinguim de muita classe 🐧",
+    primaryColor: "#1a1a2e", glowColor: "rgba(74,158,190,0.35)",
+    SVG: PiSVG,
   },
   hoshi: {
-    id: "hoshi", name: "Hoshi",
-    description: "Energética e motivadora — celebra sequências! 🌟",
-    primaryColor: "#fbbf24", glowColor: "rgba(251,191,36,0.5)",
-    SVG: HoshiSVG,
+    id: "hoshi", name: "Mila",
+    description: "Esperta e curiosa — adora descobrir novas tarefas 🦊",
+    primaryColor: "#e8744a", glowColor: "rgba(232,116,74,0.4)",
+    SVG: MilaSVG,
   },
   yuki: {
-    id: "yuki", name: "Yuki",
-    description: "Tímida e gentil — aparece quando você termina tudo 💙",
-    primaryColor: "#7dd3fc", glowColor: "rgba(125,211,252,0.4)",
-    SVG: YukiSVG,
+    id: "yuki", name: "Gabiru",
+    description: "Indiferente... até você terminar tudo! 🐈‍⬛",
+    primaryColor: "#6b7c93", glowColor: "rgba(107,124,147,0.35)",
+    SVG: GabiruSVG,
   },
 };

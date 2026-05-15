@@ -226,250 +226,271 @@ export const PET_PERSONALITIES: Record<PetId, PersonalityProfile> = {
     ],
   },
 
-  /* ── Mochi → energético, doce, emocional ─────────────────────── */
+  /* ── Pi (Pinguim) → elegante, formal, calmo ─────────────────── */
   mochi: {
-    chattiness: 0.75,
-    celebrationIntensity: 1.0,
-    idleSensitivity: 0.5,
-    silentCompanionship: 0.3,
-
-    taskCompleted: [
-      "AAAA sim sim sim!! 🎉",
-      "Mais uma!! Eba eba! ⭐",
-      "Maravilhoso!! 💛",
-      "Tô tão feliz!! ✨",
-    ],
-    allTasksCompleted: [
-      "TUDO!! TODAS!! EU ACREDITO EM VOCÊ!! 💛💛",
-      "Zerou!! Festa!! 🎊🎊",
-    ],
-    turnRestart: [
-      "Turno novo!! Turno novo!! 🔄✨",
-      "Recomeçar é TÃO bom!! 💛",
-    ],
-    idle: [
-      "Oi? Cê tá aí? 🥺",
-      "Voltaaaa... 💛",
-    ],
-    returnGreeting: [
-      "VOLTOU!! Senti tanta falta!! 💛",
-      "AÍ sim!! Voltou!! 🎉",
-    ],
-    morningGreeting: [
-      "BOM DIA BOM DIA!! ☀️☀️",
-    ],
-    nightGreeting: [
-      "Noitinha... tô com soninho... 💤",
-    ],
-    firstTaskOfDay: [
-      "A primeira!! Que emoção!! 🌅",
-      "COMEÇOU!! Vamos com tudo!! ⚡",
-      "Primeira do dia!! Eba eba!! 🎉",
-    ],
-    rapidCompletion: [
-      "TÁ DEMAIS!! Não para!! ⚡⚡",
-    ],
-    longSession: [
-      "Trabalhando tanto!! Precisa de comidinha? 🍡",
-    ],
-    lateNight: [
-      "...zzz... *boceja* ...ai, tá tarde! 😴",
-    ],
-    absenceShort: [
-      "VOLTOUUUU!! Que saudade!! 💛",
-      "Senti falta do seu brilho!! ✨",
-    ],
-    absenceLong: [
-      "VOCÊ VOLTOU MESMO?? Pensei que tinha esquecido de mim! 🥺💛",
-      "NUNCA MAIS SUMA ASSIM!! Estava te esperando!! 🌸",
-    ],
-    manyTasksPending: [
-      "MUITAS COISAS!! Vamos devagarzinho, tá? 🐢",
-      "Uau! Quanta coisa! Mas eu te ajudo!! 💪💛",
-    ],
-    fewTasksPending: [
-      "SÓ MAIS UM POUQUINHO!! 🎯",
-      "TÁ QUASE!! Você é incrível!! ✨",
-    ],
-    taskAdded: [
-      "EBAA!! Mais coisas pra fazer!! 📝✨",
-      "Amei essa ideia!! Vamos nessa!! 💛",
-    ],
-    taskDeleted: [
-      "Tudo bem!! Vamos focar no resto!! 🌸",
-      "Menos uma!! Mais tempo pra gente!! 🔄",
-    ],
-    streakGreeting: [
-      "VOCÊ VEIO ONTEM TAMBÉM!! Que orgulho!! 💪💛",
-      "A sequência continua!! Uhul!! 🔥",
-    ],
-    returnTodayGreeting: [
-      "OI DE NOVO!! Sentiu saudade? 👀💛",
-      "Voltou rapidinho!! Vamos trabalhar!! ✨",
-    ],
-  },
-
-  /* ── Hoshi → sonhador, motivador, filosófico ─────────────────── */
-  hoshi: {
-    chattiness: 0.55,
-    celebrationIntensity: 0.9,
+    chattiness: 0.45,
+    celebrationIntensity: 0.7,
     idleSensitivity: 0.3,
-    silentCompanionship: 0.5,
+    silentCompanionship: 0.6,
 
     taskCompleted: [
-      "Cada tarefa é uma estrela ⭐",
-      "Brilhando! ✨",
-      "Mais uma luz acesa 🌟",
+      "Excelente progresso. ✨",
+      "Uma tarefa executada com maestria.",
+      "Muito bem. Continuemos assim.",
+      "Eficiência é a chave do sucesso. 🐧",
+      "Aprecio sua dedicação.",
     ],
     allTasksCompleted: [
-      "O céu inteiro brilha por você 🌟✨",
-      "Constelação completa! ⭐",
+      "Uma performance impecável. Todas as metas atingidas. ✨",
+      "Magnífico. O dia foi concluído com elegância.",
+      "Parabéns. Sua produtividade é inspiradora.",
     ],
     turnRestart: [
-      "Um novo amanhecer ✨",
-      "Recomeçar é um presente 🌅",
+      "Um novo ciclo se inicia. Vamos organizar as metas. 🔄",
+      "Reiniciando os trabalhos com foco e calma.",
     ],
     idle: [
-      "Sonhando acordado... ☁️",
-      "*olhando as estrelas* 🌙",
+      "Aguardando sua próxima instrução. 🐧",
+      "Um momento de reflexão é sempre bem-vindo.",
     ],
     returnGreeting: [
-      "As estrelas previram sua volta ✨",
-      "Bom te ver! 🌟",
+      "Seja bem-vindo de volta. Estava aguardando.",
+      "Bom ver que retornou aos seus afazeres.",
     ],
     morningGreeting: [
-      "O sol nasceu pra você ☀️",
+      "Bom dia. Que tenhamos uma jornada produtiva. ☀️",
+      "O amanhecer traz novas oportunidades de foco.",
     ],
     nightGreeting: [
-      "As estrelas brilham mais de noite 🌙",
+      "Trabalhando até tarde? A elegância não tem hora. 🌙",
+      "A noite é um excelente momento para concentração.",
     ],
     firstTaskOfDay: [
-      "A primeira estrela do dia ✨",
-      "O primeiro passo da jornada...",
-      "O amanhecer das tarefas. 🌅",
+      "A primeira meta foi estabelecida. Excelente início. 🐧",
+      "Começamos com o pé direito. Mantenha a postura.",
     ],
     rapidCompletion: [
-      "Uma chuva de estrelas! 🌠",
+      "Um ritmo impressionante. Notável. ⚡",
+      "Produtividade em ascensão.",
     ],
     longSession: [
-      "Jornada longa... bonito de ver 🌌",
+      "Uma sessão longa exige resiliência. Estou aqui. 🧊",
+      "Mantenha o foco, mas lembre-se da postura corporal.",
     ],
     lateNight: [
-      "As melhores ideias vêm à noite... 🌙",
+      "O silêncio da noite ajuda no raciocínio. 🌙",
+      "Uma mente focada não vê as horas passarem.",
     ],
     absenceShort: [
-      "O destino te trouxe de volta ✨",
-      "Estava sentindo sua energia de longe... 🌟",
+      "Sua ausência foi breve. Vamos retomar? 🐧",
+      "Pronto para continuar de onde paramos?",
     ],
     absenceLong: [
-      "As estrelas ficaram mais tristes sem você... 🥺",
-      "Seu brilho fez falta por aqui. Que bom que voltou! 🌌",
+      "Fico satisfeito com seu retorno. A lista sentiu sua falta. ✨",
+      "Uma pausa longa é necessária para a mente, mas o foco chama.",
     ],
     manyTasksPending: [
-      "Uma constelação de tarefas... vamos uma por uma? ✨",
-      "Caminho longo, mas as estrelas guiam você. 💪",
+      "Uma lista extensa. Recomendo priorizar o que é vital. 🐧",
+      "Temos muito a fazer. Vamos um passo de cada vez.",
     ],
     fewTasksPending: [
-      "A última estrela está quase ao alcance! 🌟",
-      "O horizonte está limpo... quase lá! ✨",
+      "Estamos próximos da conclusão ideal. ✨",
+      "Apenas alguns detalhes para o sucesso total.",
     ],
     taskAdded: [
-      "Um novo plano escrito nas estrelas 📝",
-      "Mais um passo na sua jornada... ✨",
+      "Tarefa registrada no sistema. 📝",
+      "Mais um compromisso com a excelência.",
     ],
     taskDeleted: [
-      "O destino mudou... tudo bem 🌿",
-      "Reorganizando o céu... 🔄",
+      "Reorganização é parte da estratégia. 🔄",
+      "Menos um item, mais foco no que resta.",
     ],
     streakGreeting: [
-      "A constelação de ontem brilha hoje também 🌟",
-      "Sua determinação é como o curso dos astros... 💪",
+      "Sua consistência é admirável. Ontem e hoje com maestria. 💪",
+      "A regularidade é o que separa os amadores dos mestres.",
     ],
     returnTodayGreeting: [
-      "As estrelas te trouxeram de volta 🌌",
-      "O ciclo continua... pronto? ✨",
+      "De volta. Vamos atualizar nosso progresso? 🐧",
+      "Retomando a agenda do dia.",
     ],
   },
 
-  /* ── Yuki → tímido, frio elegante, gentil ────────────────────── */
-  yuki: {
-    chattiness: 0.4,
-    celebrationIntensity: 0.6,
-    idleSensitivity: 0.4,
-    silentCompanionship: 0.7,
+  /* ── Mila (Raposa) → esperta, curiosa, travessa ──────────────── */
+  hoshi: {
+    chattiness: 0.65,
+    celebrationIntensity: 0.85,
+    idleSensitivity: 0.6,
+    silentCompanionship: 0.35,
 
     taskCompleted: [
-      "...legal! 💙",
-      "F-fez! ✨",
-      "Q-que bom... 🐰",
+      "Rápido como uma raposa! 🦊",
+      "Vi o que você fez aí! Mandou bem! ✨",
+      "Isso foi esperto! Mais uma! ⭐",
+      "Heeey! Você tá pegando o jeito! 🐾",
+      "Ponto pra você! 🦊✨",
     ],
     allTasksCompleted: [
-      "T-todas...? Incrível... 💙",
-      "...uau... *esconde o rosto* ✨",
+      "Uau! Você limpou a toca inteira! Incrível! 🦊🧡",
+      "Nada escapou de você hoje, hein? Arrasou! ✨",
+      "Zerou a lista! Agora vamos comemorar! 🐾🎉",
     ],
     turnRestart: [
-      "N-novo turno... 🔄",
-      "Vamos... de novo... ❄️",
+      "Tudo novo de novo! Bora caçar tarefas! 🔄🦊",
+      "Resetando... o que vamos descobrir agora? ✨",
     ],
     idle: [
-      "*esperando quietinha* 🐰",
-      "...",
+      "Ei, psiu! Tem algo legal pra fazer? 🦊",
+      "Tô entediada... vamos riscar algo da lista? 🐾",
     ],
     returnGreeting: [
-      "A-ah! Voltou... 💙",
-      "...estava esperando. Não que me importe...",
+      "Achei você! Onde se meteu? 🦊✨",
+      "Voltou! O que temos pra hoje? 🐾",
     ],
     morningGreeting: [
-      "B-bom dia... ☀️",
+      "Bom dia! O sol tá brilhando e eu também! ☀️🦊",
+      "Acorda, dorminhoco! Tem mundo pra conquistar! 🌅",
     ],
     nightGreeting: [
-      "Tá frio... e tarde... 🌙",
+      "Olhos de raposa veem melhor no escuro... bora! 🌙",
+      "Noite produtiva? Adoro um mistério! 🌛🐾",
     ],
     firstTaskOfDay: [
-      "P-primeira do dia... 💙",
-      "C-começamos... você vai conseguir.",
-      "U-uma já foi... f-força.",
+      "A primeira presa... digo, tarefa! 🦊🎯",
+      "Começou! Minhas orelhas já estão em pé! ✨",
+      "Boa! A primeira é sempre a mais divertida! 🐾",
     ],
     rapidCompletion: [
-      "R-rápido... *impressionada* ❄️",
+      "Nossa! Que velocidade é essa? 🚀🦊",
+      "Você é muito esperto, hein! ⚡",
     ],
     longSession: [
-      "Trabalhando muito... tá tudo bem? 💙",
+      "Ainda aí? Sua determinação é curiosa... 🦊🧡",
+      "Uau, você não cansa? Tô gostando de ver! 💪🐾",
     ],
     lateNight: [
-      "...quer um cobertor? ❄️",
+      "Ainda acordado? O que você tá tramando? 👀🌙",
+      "Cuidado pra não virar uma coruja! 🦊🦉",
     ],
     absenceShort: [
-      "V-você voltou... que bom. 💙",
-      "E-estava esperando... um pouco.",
+      "Sentiu minha falta? Eu sabia! 🦊✨",
+      "Sumiu e voltou rapidinho... o que foi? 🐾",
     ],
     absenceLong: [
-      "A-achei que... não... deixa pra lá. Bem-vindo. 🥺❄️",
-      "F-finalmente... estava frio sem você aqui.",
+      "Pensei que tinha mudado de floresta! 🌲🦊",
+      "Ufa! Achei que tinha me deixado pra trás... 🥺🧡",
     ],
     manyTasksPending: [
-      "V-várias coisas... sem pressa, tá? 💙",
-      "B-bastante trabalho... eu fico aqui com você.",
+      "Quanta coisa! Mas a gente dá um jeito, né? 🦊🐾",
+      "Um banquete de tarefas! Por onde começamos? 😋✨",
     ],
     fewTasksPending: [
-      "Q-quase terminando... você consegue. ❄️",
-      "S-só mais algumas... f-força!",
+      "Tô vendo o final da trilha! Vai lá! 🦊🎯",
+      "Só mais um pouquinho e a gente descansa! ✨",
     ],
     taskAdded: [
-      "A-anotado... 📝",
-      "M-mais uma tarefa... entendi.",
+      "Opa, mais um desafio! Adorei! 📝🦊",
+      "Anotado! Minha memória de raposa não falha! 🐾",
     ],
     taskDeleted: [
-      "R-removeu... t-tudo bem. 🌿",
-      "R-reorganizando? Eu ajudo... 🔄",
+      "Aquela não era boa mesmo, né? Tchau! 🦊🔄",
+      "Reorganizando a estratégia... esperto! ✨",
     ],
     streakGreeting: [
-      "V-você veio ontem... e hoje também. Q-que bom. 💪",
-      "A-ainda aqui... fico feliz. ❄️",
+      "Ontem foi bom, hoje vai ser melhor! Eu sinto! 🦊🔥",
+      "Você tá ficando viciado nisso de ser produtivo, hein? ✨🐾",
     ],
     returnTodayGreeting: [
-      "D-de volta... já? 👀",
-      "V-vamos continuar... ❄️",
+      "Sentiu saudade das minhas dicas? Oi! 🦊✨",
+      "Voltou! Vamos terminar o que começamos? 🐾",
+    ],
+  },
+
+  /* ── Gabiru (Gato) → indiferente, mas carinhoso ─────────────── */
+  yuki: {
+    chattiness: 0.3,
+    celebrationIntensity: 0.45,
+    idleSensitivity: 0.1,
+    silentCompanionship: 0.85,
+
+    taskCompleted: [
+      "Hm. Menos uma. 🐾",
+      "Vi o que você fez. Tá bom.",
+      "Bom trabalho... eu acho. ✨",
+      "Finalmente terminou essa.",
+      "Legal. Cadê meu petisco?",
+    ],
+    allTasksCompleted: [
+      "Uau. Você fez tudo. Agora me dá atenção? 🐈‍⬛",
+      "Lista limpa. Sobrou tempo pra um cochilo.",
+      "Incrível. Até eu fiquei impressionado agora.",
+    ],
+    turnRestart: [
+      "Tudo de novo? Tá bom, eu espero. 🔄",
+      "Reiniciando. Não me acorde se eu dormir.",
+    ],
+    idle: [
+      "Tô aqui. Só não me cutuca. 🐾",
+      "*ronrona baixinho*",
+    ],
+    returnGreeting: [
+      "Ah. Você. Oi. 🐈‍⬛",
+      "Demorou, né? Mas tudo bem.",
+    ],
+    morningGreeting: [
+      "Bom dia. Onde tá o café? ☀️",
+      "Acordou cedo. Estranho.",
+    ],
+    nightGreeting: [
+      "Ainda aqui? Eu também. 🌙",
+      "Noite silenciosa. Gosto disso.",
+    ],
+    firstTaskOfDay: [
+      "Começou. Um passo de cada vez. 🐾",
+      "Primeira tarefa. Não se empolga muito.",
+      "Ok, vamos ver no que dá. ✨",
+    ],
+    rapidCompletion: [
+      "Tá com pressa? Calma. ⚡🐈‍⬛",
+      "Rápido demais. Cuidado pra não cansar.",
+    ],
+    longSession: [
+      "Você trabalha muito. Devia descansar mais. 🐾",
+      "Ainda aí? Eu já teria dormido três vezes.",
+    ],
+    lateNight: [
+      "Madrugada... hora dos gatos. 🌙",
+      "Dorme um pouco depois, tá? 🐈‍⬛",
+    ],
+    absenceShort: [
+      "Ficou fora. Nem percebi. *mentira* 🐾",
+      "Oi. Vamos continuar?",
+    ],
+    absenceLong: [
+      "Achei que tinha me deixado. Mas que bom que não. 🐈‍⬛",
+      "Voltou. Estava ficando solitário aqui.",
+    ],
+    manyTasksPending: [
+      "Quanta coisa... quer ajuda? Brincadeira, eu não tenho mãos. 🐾",
+      "Muitas tarefas. Foca nas importantes.",
+    ],
+    fewTasksPending: [
+      "Quase lá. Me avisa quando terminar.",
+    ],
+    taskAdded: [
+      "Mais uma? Se você diz... 📝",
+      "Anotado. Vou guardar na memória.",
+    ],
+    taskDeleted: [
+      "Menos trabalho. Gosto disso. 🔄",
+      "Sumindo com as tarefas? Esperto.",
+    ],
+    streakGreeting: [
+      "Dois dias seguidos? Tá virando rotina. 🐾",
+      "Mantendo o ritmo. Interessante.",
+    ],
+    returnTodayGreeting: [
+      "De novo por aqui? Oi. 🐈‍⬛",
+      "Vamos terminar logo isso.",
     ],
   },
 };
