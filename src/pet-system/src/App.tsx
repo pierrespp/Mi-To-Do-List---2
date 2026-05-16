@@ -1,4 +1,4 @@
-import { PetDemo } from "@/pet-system/demo/PetDemo";
+import { PetDemo } from "@pet/pet-system/demo/PetDemo";
 
 function App() {
   return <PetDemo />;
