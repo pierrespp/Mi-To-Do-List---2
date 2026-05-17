@@ -395,16 +395,10 @@
 }
 
 .important-section-card {
-  border: 2px solid transparent;
-  background-clip: padding-box;
-  position: relative;
+  border: 2px solid rgba(251, 191, 36, 0.45) !important;
+  box-shadow: 0 4px 16px rgba(251, 191, 36, 0.12) !important;
 }
-.theme-rainbow .important-section-card::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: inherit;
-  background: linear-gradient(135deg, #fbbf24, #f59e0b, #fde68a, #f59e0b);
-  z-index: -1;
-  animation: starSpin 4s linear infinite;
+.theme-rainbow .important-section-card {
+  border: 2px solid #f59e0b !important;
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.18) !important;
 }
