@@ -472,7 +472,6 @@ function SortableTaskCard({
       <div className="relative flex-shrink-0">
         <button
           onClick={() => handleToggleTask(task.id, task.completed)}
-          disabled={task.completed}
           className="w-8 h-8 rounded-full border-2 border-primary/30 flex items-center justify-center relative hover:scale-105 active:scale-95 transition-all overflow-hidden"
           style={isRainbow && pal ? { borderColor: pal.border, background: task.completed ? pal.bg : undefined } : undefined}
         >

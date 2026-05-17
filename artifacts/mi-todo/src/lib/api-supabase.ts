@@ -328,83 +328,33 @@ export function useRestartShift() {
       
       if (!workspace) throw new Error("Workspace not found");
 
-      // 1. Arquivar tarefas ativas (escopado por sectionId se fornecido)
-      // Exclui tarefas fixadas (pinned === true) que ainda não foram concluídas (completed === false)
-      let archiveQuery = supabase
+      // 1. Desmarcar todas as tarefas ativas do workspace/seção (completed = false)
+      let updateQuery = supabase
         .from("tasks")
-        .update({ archived: true })
+        .update({ completed: false })
         .eq("workspace_id", workspace.id)
-        .eq("archived", false)
-        .or("pinned.eq.false,completed.eq.true");
+        .eq("archived", false);
 
       if (sectionId !== undefined) {
-        archiveQuery = archiveQuery.eq("section_id", sectionId);
+        updateQuery = updateQuery.eq("section_id", sectionId);
       }
-      await archiveQuery;
+      await updateQuery;
 
-      // 2. Turno: Se for reset completo (sem sectionId), criar novo turno
-      let shiftId: number | null = null;
+      // 2. Turno: Se for reset completo (sem sectionId), criar novo turno e associar tarefas ativas
       if (sectionId === undefined) {
-        const { data: shift } = await supabase
+        const { data: shift, error: shiftError } = await supabase
           .from("shifts")
           .insert({ workspace_id: workspace.id })
           .select()
           .single();
-        shiftId = shift.id;
-      } else {
-        // Buscar o turno ativo atual do workspace para herança atômica nas recorrentes
-        const { data: activeShift } = await supabase
-          .from("shifts")
-          .select("id")
-          .eq("workspace_id", workspace.id)
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .maybeSingle();
         
-        if (activeShift) {
-          shiftId = activeShift.id;
+        if (!shiftError && shift) {
+          await supabase
+            .from("tasks")
+            .update({ shift_id: shift.id })
+            .eq("workspace_id", workspace.id)
+            .eq("archived", false);
         }
-      }
-
-      // 3. Buscar e recriar recorrentes com position sequencial limpa escopada
-      let recurringQuery = supabase
-        .from("tasks")
-        .select("*")
-        .eq("workspace_id", workspace.id)
-        .eq("recurring", true)
-        .eq("archived", true);
-
-      if (sectionId !== undefined) {
-        recurringQuery = recurringQuery.eq("section_id", sectionId);
-      }
-      const { data: recurringTasks } = await recurringQuery;
-      
-      if (recurringTasks && recurringTasks.length > 0) {
-        // Contadores sequenciais indexados por section_id para reindexação limpa de position
-        const positionCounters: Record<number, number> = {};
-
-        const newTasks = recurringTasks.map(t => {
-          const secId = t.section_id || 0;
-          if (positionCounters[secId] === undefined) {
-            positionCounters[secId] = 0;
-          }
-          const currentPos = positionCounters[secId]++;
-
-          return {
-            workspace_id: workspace.id,
-            section_id: t.section_id,
-            shift_id: shiftId,
-            title: t.title,
-            priority: t.priority,
-            pinned: t.pinned,
-            recurring: true,
-            completed: false,
-            archived: false,
-            position: currentPos, // Posição sequencial e limpa (0, 1, 2...)
-          };
-        });
-
-        await supabase.from("tasks").insert(newTasks);
       }
 
       return { success: true };
