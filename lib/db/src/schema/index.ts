@@ -48,6 +48,7 @@ export const tasksTable = pgTable("tasks", {
   pinned: boolean("pinned").notNull().default(false),
   recurring: boolean("recurring").notNull().default(false),
   archived: boolean("archived").notNull().default(false),
+  position: integer("position").notNull().default(0),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

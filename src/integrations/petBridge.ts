@@ -21,6 +21,10 @@ export const petBridge = {
     const adapter = await getAdapter();
     adapter?.onTurnRestart();
   },
+  sectionReset: async () => {
+    const adapter = await getAdapter();
+    adapter?.onSectionReset?.();
+  },
   appOpen: async (params?: { pendingTaskCount?: number }) => {
     const adapter = await getAdapter();
     adapter?.onAppOpen(params?.pendingTaskCount);

@@ -3,6 +3,7 @@
   "include": ["src/**/*"],
   "exclude": ["node_modules", "build", "dist", "**/*.test.ts"],
   "compilerOptions": {
+    "baseUrl": ".",
     "noEmit": true,
     "jsx": "preserve",
     "lib": ["esnext", "dom", "dom.iterable"],
@@ -11,6 +12,7 @@
     "moduleResolution": "bundler",
     "types": ["node", "vite/client"],
     "paths": {
+      "@/*": ["./src/*"],
       "@pet/*": ["./src/*"]
     }
   },

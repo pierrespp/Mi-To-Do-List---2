@@ -341,7 +341,7 @@ const PiSVG: React.FC<PetSVGProps> = ({ mood }) => {
 
 /* ─── Mila (Raposa Branca) ─────────────────────────────────────────── */
 const MilaSVG: React.FC<PetSVGProps> = ({ mood }) => {
-  const isHappy = mood === 'happy' || mood === 'ecstatic' || mood === 'excited';
+  const isHappy = mood === 'happy' || mood === 'ecstatic' || (mood as string) === 'excited';
   
   return (
     <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ overflow: "visible" }}>
@@ -402,7 +402,7 @@ const MilaSVG: React.FC<PetSVGProps> = ({ mood }) => {
 
       {/* Olhos - Técnica Kawaii com Eye Shine deslocado */}
       <g className="pet-eyes">
-        {mood === 'sleepy' || mood === 'tired' ? (
+        {mood === 'sleepy' || (mood as string) === 'tired' ? (
           <>
             <path d="M40 60 Q45 65 50 60" stroke="#431407" strokeWidth="2.5" fill="none" strokeLinecap="round" />
             <path d="M70 60 Q75 65 80 60" stroke="#431407" strokeWidth="2.5" fill="none" strokeLinecap="round" />
@@ -453,7 +453,7 @@ const MilaSVG: React.FC<PetSVGProps> = ({ mood }) => {
 /* ─── Gabiru (Gato) ───────────────────────────────────────────────── */
 /* ─── Gabiru (Gato Cinza - Versão Final Rechonchuda) ─────────────── */
 const GabiruSVG: React.FC<PetSVGProps> = ({ mood }) => {
-  const isSleepy = mood === 'sleepy' || mood === 'tired' || mood === 'neutral';
+  const isSleepy = mood === 'sleepy' || (mood as string) === 'tired' || mood === 'neutral';
   
   return (
     <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ overflow: "visible" }}>

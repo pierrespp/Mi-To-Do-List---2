@@ -51,10 +51,14 @@ Thumbs.db
 # Assets & Agent
 attached_assets/
 .agent/
+.agent_backups/
 .gemini/
 
 # Security
 .env
 .env.local
 .env.*.local
+.replit-artifact/
+*.log
+
 

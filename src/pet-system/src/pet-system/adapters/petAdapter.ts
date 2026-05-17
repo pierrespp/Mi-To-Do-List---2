@@ -214,6 +214,15 @@ export const petAdapter = {
     a.enqueueReaction(pickFresh(p.turnRestart), "excited", 2800);
   },
 
+  onSectionReset(): void {
+    const a = act();
+    a.addHappiness(5);
+    a.addEnergy(10);
+    a.setIdle(false);
+    a.setLastInteraction(Date.now());
+    a.enqueueReaction("Vamos reorganizar esta lista mágica? ↺", "happy", 2500);
+  },
+
   onTaskOverdue(_taskName?: string): void {
     const a = act();
     const settings = store().settings;

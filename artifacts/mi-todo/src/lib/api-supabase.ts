@@ -29,6 +29,7 @@ export interface Task {
   pinned: boolean;
   recurring: boolean;
   archived: boolean;
+  position: number;
   createdAt: string;
 }
 
@@ -318,7 +319,7 @@ export function useGetWorkspaceStats(slug: string, options?: any) {
 export function useRestartShift() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ slug }: { slug: string }) => {
+    mutationFn: async ({ slug, sectionId }: { slug: string; sectionId?: number }) => {
       const { data: workspace } = await supabase
         .from("workspaces")
         .select("id")
@@ -327,43 +328,160 @@ export function useRestartShift() {
       
       if (!workspace) throw new Error("Workspace not found");
 
-      await supabase
+      // 1. Arquivar tarefas ativas (escopado por sectionId se fornecido)
+      let archiveQuery = supabase
         .from("tasks")
         .update({ archived: true })
         .eq("workspace_id", workspace.id)
         .eq("archived", false);
 
-      const { data: shift } = await supabase
-        .from("shifts")
-        .insert({ workspace_id: workspace.id })
-        .select()
-        .single();
+      if (sectionId !== undefined) {
+        archiveQuery = archiveQuery.eq("section_id", sectionId);
+      }
+      await archiveQuery;
 
-      const { data: recurringTasks } = await supabase
+      // 2. Turno: Se for reset completo (sem sectionId), criar novo turno
+      let shiftId: number | null = null;
+      if (sectionId === undefined) {
+        const { data: shift } = await supabase
+          .from("shifts")
+          .insert({ workspace_id: workspace.id })
+          .select()
+          .single();
+        shiftId = shift.id;
+      } else {
+        // Buscar o turno ativo atual do workspace para herança atômica nas recorrentes
+        const { data: activeShift } = await supabase
+          .from("shifts")
+          .select("id")
+          .eq("workspace_id", workspace.id)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        
+        if (activeShift) {
+          shiftId = activeShift.id;
+        }
+      }
+
+      // 3. Buscar e recriar recorrentes com position sequencial limpa escopada
+      let recurringQuery = supabase
         .from("tasks")
         .select("*")
         .eq("workspace_id", workspace.id)
         .eq("recurring", true)
         .eq("archived", true);
+
+      if (sectionId !== undefined) {
+        recurringQuery = recurringQuery.eq("section_id", sectionId);
+      }
+      const { data: recurringTasks } = await recurringQuery;
       
       if (recurringTasks && recurringTasks.length > 0) {
-        const newTasks = recurringTasks.map(t => ({
-          workspace_id: workspace.id,
-          section_id: t.section_id,
-          shift_id: shift.id,
-          title: t.title,
-          priority: t.priority,
-          pinned: t.pinned,
-          recurring: true,
-          completed: false,
-          archived: false,
-        }));
+        // Contadores sequenciais indexados por section_id para reindexação limpa de position
+        const positionCounters: Record<number, number> = {};
+
+        const newTasks = recurringTasks.map(t => {
+          const secId = t.section_id || 0;
+          if (positionCounters[secId] === undefined) {
+            positionCounters[secId] = 0;
+          }
+          const currentPos = positionCounters[secId]++;
+
+          return {
+            workspace_id: workspace.id,
+            section_id: t.section_id,
+            shift_id: shiftId,
+            title: t.title,
+            priority: t.priority,
+            pinned: t.pinned,
+            recurring: true,
+            completed: false,
+            archived: false,
+            position: currentPos, // Posição sequencial e limpa (0, 1, 2...)
+          };
+        });
+
         await supabase.from("tasks").insert(newTasks);
       }
 
       return { success: true };
     },
     onSuccess: (_, { slug }) => {
+      queryClient.invalidateQueries({ queryKey: getListTasksQueryKey(slug) });
+      queryClient.invalidateQueries({ queryKey: getGetWorkspaceStatsQueryKey(slug) });
+    },
+  });
+}
+
+export function useReorderTasks() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      slug,
+      sectionId,
+      reorderedTasks,
+    }: {
+      slug: string;
+      sectionId: number;
+      reorderedTasks: { id: number; position: number }[];
+    }) => {
+      // Batch upsert em um único roundtrip HTTP atômico e escopado
+      const { error } = await supabase
+        .from("tasks")
+        .upsert(
+          reorderedTasks.map(t => ({ 
+            id: t.id, 
+            section_id: sectionId, 
+            position: t.position 
+          })),
+          { onConflict: "id" }
+        );
+
+      if (error) throw error;
+
+      return { success: true };
+    },
+    // Optimistic UI Update (Instantâneo Local)
+    onMutate: async ({ slug, sectionId, reorderedTasks }) => {
+      const queryKey = getListTasksQueryKey(slug);
+      
+      // Cancelar queries ativas para evitar race conditions
+      await queryClient.cancelQueries({ queryKey });
+
+      // Salvar snapshot do estado anterior
+      const previousTasks = queryClient.getQueryData<Task[]>(queryKey);
+
+      // Atualizar localmente o cache de tarefas de forma otimista
+      if (previousTasks) {
+        const reorderedMap = new Map(reorderedTasks.map(t => [t.id, t.position]));
+        
+        const optimisticTasks = previousTasks.map(task => {
+          if (task.sectionId === sectionId && reorderedMap.has(task.id)) {
+            return {
+              ...task,
+              position: reorderedMap.get(task.id)!,
+            };
+          }
+          return task;
+        });
+
+        // Ordenar instantaneamente o cache local para evitar glitches visuais
+        optimisticTasks.sort((a, b) => a.position - b.position);
+
+        queryClient.setQueryData<Task[]>(queryKey, optimisticTasks);
+      }
+
+      return { previousTasks };
+    },
+    onError: (err, { slug }, context) => {
+      // Rollback imediato no client em caso de falha de rede física
+      if (context?.previousTasks) {
+        queryClient.setQueryData(getListTasksQueryKey(slug), context.previousTasks);
+      }
+    },
+    onSettled: (data, error, { slug }) => {
+      // Sincronização final de segurança e estatísticas
       queryClient.invalidateQueries({ queryKey: getListTasksQueryKey(slug) });
       queryClient.invalidateQueries({ queryKey: getGetWorkspaceStatsQueryKey(slug) });
     },

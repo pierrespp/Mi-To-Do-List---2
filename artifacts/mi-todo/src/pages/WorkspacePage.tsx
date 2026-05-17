@@ -9,18 +9,44 @@ import {
   useDeleteTask,
   useCreateSection,
   useRestartShift,
+  useReorderTasks,
   getListTasksQueryKey,
   getGetWorkspaceStatsQueryKey,
   getListSectionsQueryKey,
 } from "@/lib/api-supabase";
 import { useState, KeyboardEvent, useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Check, Plus, Trash2, Heart, Star, Sparkles, Loader2, Pin, Calendar, AlertCircle, RefreshCw, Menu, X } from "lucide-react";
+import { Check, Plus, Trash2, Heart, Star, Sparkles, Loader2, Pin, Calendar, AlertCircle, RefreshCw, Menu, X, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { useTheme } from "@/components/ThemeToggle";
 import { petBridge } from "../../../../src/integrations/petBridge";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 /* ─── Section colour palette ─────────────────────────────────── */
 const PALETTES = [
@@ -378,6 +404,168 @@ const QUOTES = [
   "Proud of you today 💜",
 ];
 
+interface SortableTaskCardProps {
+  task: any;
+  idx: number;
+  sectionMap: Map<number, any>;
+  isRainbow: boolean;
+  completingId: number | null;
+  handleToggleTask: (id: number, completed: boolean) => void;
+  deleteTask: any;
+  slug: string;
+  queryClient: any;
+}
+
+function SortableTaskCard({
+  task,
+  idx,
+  sectionMap,
+  isRainbow,
+  completingId,
+  handleToggleTask,
+  deleteTask,
+  slug,
+  queryClient,
+}: SortableTaskCardProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: task.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.35 : task.completed ? 0.55 : 1,
+    background: task.completed ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.72)",
+    animationDelay: `${idx * 0.04}s`,
+    transitionProperty: "transform, opacity, background-color, border-color, box-shadow",
+  };
+
+  const sectionInfo = task.sectionId != null ? sectionMap.get(task.sectionId) : null;
+  const pal = sectionInfo?.palette;
+  const isCompleting = completingId === task.id;
+  const isImportant = sectionInfo?.name?.toLowerCase().includes("import");
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`flex items-center gap-4 p-5 rounded-3xl glass-card transition-all duration-300 task-card-enter ${
+        isImportant && isRainbow ? "important-section-card" : ""
+      }`}
+    >
+      {/* Alça de Arrasto Visual (Grip) */}
+      <div
+        {...attributes}
+        {...listeners}
+        className="cursor-grab active:cursor-grabbing p-1 text-muted-foreground/40 hover:text-primary transition-colors flex-shrink-0"
+        aria-label="Arrastar para reordenar"
+      >
+        <GripVertical className="w-4 h-4" />
+      </div>
+
+      {/* Botão de Concluir */}
+      <div className="relative flex-shrink-0">
+        <button
+          onClick={() => handleToggleTask(task.id, task.completed)}
+          disabled={task.completed}
+          className="w-8 h-8 rounded-full border-2 border-primary/30 flex items-center justify-center relative hover:scale-105 active:scale-95 transition-all overflow-hidden"
+          style={isRainbow && pal ? { borderColor: pal.border, background: task.completed ? pal.bg : undefined } : undefined}
+        >
+          {task.completed ? (
+            <Check className="w-4 h-4 text-white fill-white animate-bounce-in" />
+          ) : isCompleting ? (
+            <Loader2 className="w-4 h-4 animate-spin text-primary" />
+          ) : null}
+          {isCompleting && (
+            <span style={{
+              position: "absolute", inset: -5,
+              borderRadius: "50%",
+              border: "2.5px solid #ec4899",
+              animation: "rippleExpand 0.55s ease-out forwards",
+              pointerEvents: "none",
+            }} />
+          )}
+          {isCompleting && (
+            <span style={{
+              position: "absolute", inset: -10,
+              borderRadius: "50%",
+              border: "1.5px solid rgba(167,139,250,0.6)",
+              animation: "rippleExpand 0.7s ease-out 0.1s forwards",
+              pointerEvents: "none",
+            }} />
+          )}
+        </button>
+        {isCompleting && isRainbow && <SparkBurst />}
+      </div>
+
+      {/* Título + badge de seção */}
+      <div className="flex-1 min-w-0">
+        <span className={`text-lg font-bold block truncate ${task.completed ? "line-through text-muted-foreground" : "text-foreground"}`}>
+          {task.title}
+        </span>
+        {sectionInfo && !task.completed && (
+          <span className="inline-flex items-center gap-1 mt-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold"
+            style={{
+              background: pal?.bg ?? "rgba(236,72,153,0.12)",
+              border: `1px solid ${pal?.border ?? "rgba(236,72,153,0.25)"}`,
+              color: pal?.text ?? "#ec4899",
+              backdropFilter: "blur(6px)",
+            }}>
+            {sectionInfo.emoji} {sectionInfo.name}
+          </span>
+        )}
+      </div>
+
+      {/* Badges */}
+      <div className="flex items-center gap-2 flex-shrink-0">
+        {task.priority === "high" && (
+          <Badge className="border-0 rounded-full px-2.5 py-0.5 font-bold text-xs"
+            style={{ background: "rgba(239,68,68,0.1)", color: "#dc2626" }}>
+            <AlertCircle className="w-3 h-3 mr-1 inline" /> Alta
+          </Badge>
+        )}
+        {task.pinned && (
+          <div className="w-7 h-7 rounded-full flex items-center justify-center" style={{ background: "rgba(236,72,153,0.1)" }}>
+            <Pin className="w-3.5 h-3.5 text-primary" />
+          </div>
+        )}
+        {task.recurring && (
+          <div className="w-7 h-7 rounded-full flex items-center justify-center" style={{ background: "rgba(103,232,249,0.15)" }}>
+            <Calendar className="w-3.5 h-3.5 text-cyan-600" />
+          </div>
+        )}
+        {isCompleting && isRainbow && (
+          <>
+            <span className="sparkle-animation text-base">✨</span>
+            <span className="sparkle-animation text-sm" style={{ animationDelay: "0.1s" }}>⭐</span>
+          </>
+        )}
+        <button
+          onClick={() => {
+            deleteTask.mutate({ slug, taskId: task.id }, {
+              onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: getListTasksQueryKey(slug) });
+                queryClient.invalidateQueries({ queryKey: getGetWorkspaceStatsQueryKey(slug) });
+              }
+            });
+          }}
+          className="w-11 h-11 lg:w-8 lg:h-8 rounded-full flex items-center justify-center text-muted-foreground transition-all ml-1"
+          style={{ transition: "all 0.2s" }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(239,68,68,0.1)"; (e.currentTarget as HTMLElement).style.color = "#dc2626"; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = ""; }}
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 /* ─────────────────────────────────────────────────────────────── */
 /*  Main Component                                                  */
 /* ─────────────────────────────────────────────────────────────── */
@@ -406,6 +594,76 @@ export default function WorkspacePage() {
   const deleteTask = useDeleteTask();
   const createSection = useCreateSection();
   const restartShift = useRestartShift();
+  const reorderTasks = useReorderTasks();
+
+  const [resetModalOpen, setResetModalOpen] = useState(false);
+  const [targetResetSection, setTargetResetSection] = useState<{ id: number | null; name: string } | null>(null);
+
+  const handleOpenResetConfirmModal = (sectionId: number | null, sectionName: string) => {
+    setTargetResetSection({ id: sectionId, name: sectionName });
+    setResetModalOpen(true);
+  };
+
+  const handleConfirmReset = () => {
+    if (!targetResetSection) return;
+    
+    restartShift.mutate(
+      { slug, sectionId: targetResetSection.id || undefined },
+      {
+        onSuccess: () => {
+          if (targetResetSection.id) {
+            petBridge.sectionReset();
+          } else {
+            petBridge.turnRestart();
+          }
+          setResetModalOpen(false);
+        }
+      }
+    );
+  };
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const activeTask = tasks?.find(t => t.id === active.id);
+    if (!activeTask) return;
+
+    const targetSectionId = activeTask.sectionId;
+    if (targetSectionId == null) return;
+
+    const sectionTasks = tasks?.filter(t => t.sectionId === targetSectionId) || [];
+    sectionTasks.sort((a, b) => a.position - b.position);
+
+    const oldIndex = sectionTasks.findIndex(t => t.id === active.id);
+    const newIndex = sectionTasks.findIndex(t => t.id === over.id);
+
+    if (oldIndex !== -1 && newIndex !== -1) {
+      const movedTasks = arrayMove(sectionTasks, oldIndex, newIndex);
+      
+      const reorderedTasksPayload = movedTasks.map((t, idx) => ({
+        id: t.id,
+        position: idx,
+      }));
+
+      reorderTasks.mutate({
+        slug,
+        sectionId: targetSectionId,
+        reorderedTasks: reorderedTasksPayload,
+      });
+    }
+  };
 
   const hasGreeted = useRef(false);
   useEffect(() => {
@@ -606,25 +864,37 @@ export default function WorkspacePage() {
             const isSelected = selectedSectionId === section.id;
             const isImportant = section.name.toLowerCase().includes("import");
             return (
-              <button key={section.id}
-                onClick={() => { setSelectedSectionId(section.id); setDrawerOpen(false); }}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left font-bold transition-all duration-200"
-                style={isSelected ? {
-                  background: "linear-gradient(135deg, #ec4899, #a78bfa)",
-                  color: "white",
-                  boxShadow: isRainbow ? `0 4px 16px ${pal.glow}` : "0 2px 10px rgba(236,72,153,0.2)",
-                  transform: "scale(1.03)",
-                } : {
-                  color: "var(--color-muted-foreground)",
-                  ...(isImportant && isRainbow ? { border: "1px solid rgba(251,191,36,0.35)" } : {}),
-                }}
-                onMouseEnter={e => { if (!isSelected) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.6)"; }}
-                onMouseLeave={e => { if (!isSelected) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
-              >
-                <span className="flex-shrink-0">{section.emoji}</span>
-                <span className="truncate">{section.name}</span>
-                {isImportant && <span className="ml-auto text-xs opacity-70">⭐</span>}
-              </button>
+              <div key={section.id} className="group/section relative w-full flex items-center justify-between">
+                <button
+                  onClick={() => { setSelectedSectionId(section.id); setDrawerOpen(false); }}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left font-bold transition-all duration-200 pr-10"
+                  style={isSelected ? {
+                    background: "linear-gradient(135deg, #ec4899, #a78bfa)",
+                    color: "white",
+                    boxShadow: isRainbow ? `0 4px 16px ${pal.glow}` : "0 2px 10px rgba(236,72,153,0.2)",
+                    transform: "scale(1.03)",
+                  } : {
+                    color: "var(--color-muted-foreground)",
+                    ...(isImportant && isRainbow ? { border: "1px solid rgba(251,191,36,0.35)" } : {}),
+                  }}
+                  onMouseEnter={e => { if (!isSelected) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.6)"; }}
+                  onMouseLeave={e => { if (!isSelected) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+                >
+                  <span className="flex-shrink-0">{section.emoji}</span>
+                  <span className="truncate">{section.name}</span>
+                  {isImportant && <span className="ml-auto text-xs opacity-70">⭐</span>}
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOpenResetConfirmModal(section.id, section.name);
+                  }}
+                  className="absolute right-3 p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-white/40 opacity-0 group-hover/section:opacity-100 transition-opacity duration-200 hidden md:flex"
+                  aria-label={`Resetar seção ${section.name}`}
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                </button>
+              </div>
             );
           })}
 
@@ -675,15 +945,7 @@ export default function WorkspacePage() {
             }}
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "scale(1.03)"; (e.currentTarget as HTMLElement).style.boxShadow = "0 6px 28px rgba(236,72,153,0.55)"; }}
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = "scale(1)"; (e.currentTarget as HTMLElement).style.boxShadow = isRainbow ? "0 4px 20px rgba(236,72,153,0.4)" : "0 4px 14px rgba(236,72,153,0.25)"; }}
-            onClick={() => {
-              restartShift.mutate({ slug }, {
-                onSuccess: () => {
-                  petBridge.turnRestart();
-                  queryClient.invalidateQueries({ queryKey: getListTasksQueryKey(slug) });
-                  queryClient.invalidateQueries({ queryKey: getGetWorkspaceStatsQueryKey(slug) });
-                }
-              });
-            }}>
+            onClick={() => handleOpenResetConfirmModal(null, "Turno Completo")}>
             {restartShift.isPending ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <RefreshCw className="w-5 h-5 mr-2" />}
             ✨ Reiniciar Turno
           </Button>
@@ -775,184 +1037,159 @@ export default function WorkspacePage() {
                 )}
               </div>
 
-            ) : (
-              /* ── TASK CARDS ── */
-              filteredTasks.map((task, idx) => {
-                const sectionInfo = task.sectionId != null ? sectionMap.get(task.sectionId) : null;
-                const pal = sectionInfo?.palette;
-                const isCompleting = completingId === task.id;
-                const isImportant = sectionInfo?.name?.toLowerCase().includes("import");
-
-                return (
-                  <div key={task.id}
-                    className={`flex items-center gap-4 p-5 rounded-3xl glass-card transition-all duration-300 task-card-enter ${
-                      task.completed ? "opacity-55" : ""
-                    } ${isImportant && isRainbow ? "important-section-card" : ""}`}
-                    style={{
-                      animationDelay: `${idx * 0.04}s`,
-                      background: task.completed ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.72)",
-                      borderLeft: isRainbow && pal && !task.completed ? `3px solid ${pal.border}` : undefined,
-                      boxShadow: isRainbow && pal && !task.completed
-                        ? `0 4px 20px ${pal.glow.replace("0.45","0.18")}, 0 1px 4px rgba(0,0,0,0.04)`
-                        : "0 2px 12px rgba(0,0,0,0.05)",
-                      transition: "all 0.25s cubic-bezier(0.34,1.2,0.64,1)",
-                    }}
-                    onMouseEnter={e => {
-                      if (!task.completed) {
-                        (e.currentTarget as HTMLElement).style.transform = "translateY(-2px) scale(1.006)";
-                        if (isRainbow && pal) (e.currentTarget as HTMLElement).style.boxShadow = `0 8px 28px ${pal.glow.replace("0.45","0.32")}, 0 2px 8px rgba(0,0,0,0.06)`;
-                      }
-                    }}
-                    onMouseLeave={e => {
-                      (e.currentTarget as HTMLElement).style.transform = "";
-                      if (isRainbow && pal && !task.completed) (e.currentTarget as HTMLElement).style.boxShadow = `0 4px 20px ${pal.glow.replace("0.45","0.18")}, 0 1px 4px rgba(0,0,0,0.04)`;
-                    }}
-                  >
-                    {/* Premium Checkbox */}
-                    <div style={{ position: "relative", flexShrink: 0 }}>
-                      <button
-                        onClick={() => handleToggleTask(task.id, task.completed)}
-                        className={isCompleting ? "check-bounce" : ""}
-                        style={{
-                          width: 34, height: 34,
-                          minWidth: 44, minHeight: 44,
-                          borderRadius: "50%",
-                          display: "flex", alignItems: "center", justifyContent: "center",
-                          cursor: "pointer",
-                          position: "relative",
-                          overflow: "visible",
-                          border: task.completed ? "none" : "2.5px solid rgba(236,72,153,0.35)",
-                          background: task.completed
-                            ? "linear-gradient(135deg, #ec4899, #a78bfa)"
-                            : "rgba(255,255,255,0.4)",
-                          boxShadow: task.completed
-                            ? isRainbow
-                              ? "0 0 16px rgba(236,72,153,0.55), 0 0 32px rgba(167,139,250,0.3)"
-                              : "0 2px 10px rgba(236,72,153,0.3)"
-                            : "none",
-                          transition: "all 0.25s cubic-bezier(0.34,1.56,0.64,1)",
-                        }}
-                        onMouseEnter={e => {
-                          if (!task.completed) {
-                            const el = e.currentTarget as HTMLElement;
-                            el.style.borderColor = "#ec4899";
-                            el.style.background = "rgba(236,72,153,0.1)";
-                            el.style.transform = "scale(1.1)";
-                            el.style.boxShadow = "0 0 10px rgba(236,72,153,0.25)";
-                          }
-                        }}
-                        onMouseLeave={e => {
-                          if (!task.completed) {
-                            const el = e.currentTarget as HTMLElement;
-                            el.style.borderColor = "rgba(236,72,153,0.35)";
-                            el.style.background = "rgba(255,255,255,0.4)";
-                            el.style.transform = "";
-                            el.style.boxShadow = "none";
-                          }
-                        }}
-                      >
-                        {/* Custom animated checkmark */}
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                          style={{ opacity: task.completed ? 1 : 0, transition: "opacity 0.2s" }}>
-                          <path d="M3 8.5 L6.5 12 L13 5"
-                            stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"
-                            strokeDasharray="20"
-                            strokeDashoffset={task.completed ? "0" : "20"}
-                            style={{ transition: "stroke-dashoffset 0.3s cubic-bezier(0.34,1.56,0.64,1)" }}
-                          />
-                        </svg>
-
-                        {/* Ripple ring on completion */}
-                        {isCompleting && (
-                          <span style={{
-                            position: "absolute", inset: -5,
-                            borderRadius: "50%",
-                            border: "2.5px solid #ec4899",
-                            animation: "rippleExpand 0.55s ease-out forwards",
-                            pointerEvents: "none",
-                          }} />
-                        )}
-                        {isCompleting && (
-                          <span style={{
-                            position: "absolute", inset: -10,
-                            borderRadius: "50%",
-                            border: "1.5px solid rgba(167,139,250,0.6)",
-                            animation: "rippleExpand 0.7s ease-out 0.1s forwards",
-                            pointerEvents: "none",
-                          }} />
-                        )}
-                      </button>
-
-                      {/* Particle burst — rainbow mode only */}
-                      {isCompleting && isRainbow && <SparkBurst />}
-                    </div>
-
-                    {/* Title + section badge */}
-                    <div className="flex-1 min-w-0">
-                      <span className={`text-lg font-bold block truncate ${task.completed ? "line-through text-muted-foreground" : "text-foreground"}`}>
-                        {task.title}
-                      </span>
-                      {selectedSectionId === null && sectionInfo && !task.completed && (
-                        <span className="inline-flex items-center gap-1 mt-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold"
-                          style={{
-                            background: pal?.bg ?? "rgba(236,72,153,0.12)",
-                            border: `1px solid ${pal?.border ?? "rgba(236,72,153,0.25)"}`,
-                            color: pal?.text ?? "#ec4899",
-                            backdropFilter: "blur(6px)",
-                          }}>
-                          {sectionInfo.emoji} {sectionInfo.name}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Badges */}
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      {task.priority === "high" && (
-                        <Badge className="border-0 rounded-full px-2.5 py-0.5 font-bold text-xs"
-                          style={{ background: "rgba(239,68,68,0.1)", color: "#dc2626" }}>
-                          <AlertCircle className="w-3 h-3 mr-1 inline" /> Alta
-                        </Badge>
-                      )}
-                      {task.pinned && (
-                        <div className="w-7 h-7 rounded-full flex items-center justify-center" style={{ background: "rgba(236,72,153,0.1)" }}>
-                          <Pin className="w-3.5 h-3.5 text-primary" />
-                        </div>
-                      )}
-                      {task.recurring && (
-                        <div className="w-7 h-7 rounded-full flex items-center justify-center" style={{ background: "rgba(103,232,249,0.15)" }}>
-                          <Calendar className="w-3.5 h-3.5 text-cyan-600" />
-                        </div>
-                      )}
-                      {isCompleting && isRainbow && (
-                        <>
-                          <span className="sparkle-animation text-base">✨</span>
-                          <span className="sparkle-animation text-sm" style={{ animationDelay: "0.1s" }}>⭐</span>
-                        </>
-                      )}
-                      <button
-                        onClick={() => {
-                          deleteTask.mutate({ slug, taskId: task.id }, {
-                            onSuccess: () => {
-                              queryClient.invalidateQueries({ queryKey: getListTasksQueryKey(slug) });
-                              queryClient.invalidateQueries({ queryKey: getGetWorkspaceStatsQueryKey(slug) });
-                            }
-                          });
-                        }}
-                        className="w-11 h-11 lg:w-8 lg:h-8 rounded-full flex items-center justify-center text-muted-foreground transition-all ml-1"
-                        style={{ transition: "all 0.2s" }}
-                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(239,68,68,0.1)"; (e.currentTarget as HTMLElement).style.color = "#dc2626"; }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = ""; }}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
+            ) : selectedSectionId !== null ? (
+              /* ── SINGLE SECTION SORTABLE TASK LIST ── */
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={filteredTasks.map(t => t.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="space-y-3">
+                    {filteredTasks.map((task, idx) => (
+                      <SortableTaskCard
+                        key={task.id}
+                        task={task}
+                        idx={idx}
+                        sectionMap={sectionMap}
+                        isRainbow={isRainbow}
+                        completingId={completingId}
+                        handleToggleTask={handleToggleTask}
+                        deleteTask={deleteTask}
+                        slug={slug}
+                        queryClient={queryClient}
+                      />
+                    ))}
                   </div>
-                );
-              })
+                </SortableContext>
+              </DndContext>
+            ) : (
+              /* ── ALL TASKS VIEW - MULTIPLE INDEPENDENT SORTABLE CONTEXTS ── */
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <div className="space-y-8">
+                  {sections?.map((section) => {
+                    const sectionTasks = filteredTasks.filter(t => t.sectionId === section.id);
+                    if (sectionTasks.length === 0) return null;
+
+                    sectionTasks.sort((a, b) => a.position - b.position);
+
+                    return (
+                      <div key={section.id} className="space-y-3">
+                        <div className="flex items-center gap-2 px-1">
+                          <span className="text-lg">{section.emoji}</span>
+                          <h4 className="text-lg font-black text-foreground/80">{section.name}</h4>
+                          <span className="text-xs font-bold text-muted-foreground/60">({sectionTasks.length})</span>
+                        </div>
+                        <SortableContext
+                          items={sectionTasks.map(t => t.id)}
+                          strategy={verticalListSortingStrategy}
+                        >
+                          <div className="space-y-3">
+                            {sectionTasks.map((task, idx) => (
+                              <SortableTaskCard
+                                key={task.id}
+                                task={task}
+                                idx={idx}
+                                sectionMap={sectionMap}
+                                isRainbow={isRainbow}
+                                completingId={completingId}
+                                handleToggleTask={handleToggleTask}
+                                deleteTask={deleteTask}
+                                slug={slug}
+                                queryClient={queryClient}
+                              />
+                            ))}
+                          </div>
+                        </SortableContext>
+                      </div>
+                    );
+                  })}
+                  
+                  {/* Tarefas órfãs (sem seção associada, se houver) */}
+                  {filteredTasks.filter(t => t.sectionId === null).length > 0 && (
+                    <div className="space-y-3">
+                      <h4 className="text-lg font-black text-foreground/80 px-1">Geral</h4>
+                      <SortableContext
+                        items={filteredTasks.filter(t => t.sectionId === null).map(t => t.id)}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        <div className="space-y-3">
+                          {filteredTasks.filter(t => t.sectionId === null).map((task, idx) => (
+                            <SortableTaskCard
+                              key={task.id}
+                              task={task}
+                              idx={idx}
+                              sectionMap={sectionMap}
+                              isRainbow={isRainbow}
+                              completingId={completingId}
+                              handleToggleTask={handleToggleTask}
+                              deleteTask={deleteTask}
+                              slug={slug}
+                              queryClient={queryClient}
+                            />
+                          ))}
+                        </div>
+                      </SortableContext>
+                    </div>
+                  )}
+                </div>
+              </DndContext>
             )}
           </div>
         </div>
       </div>
+
+      {/* Modal de Confirmação Acessível (Radix Dialog) */}
+      <Dialog open={resetModalOpen} onOpenChange={setResetModalOpen}>
+        <DialogContent className="max-w-md rounded-3xl glass-card border-primary/20 p-6">
+          <DialogHeader className="space-y-3">
+            <DialogTitle className="text-2xl font-black gradient-text flex items-center gap-2">
+              <RefreshCw className="w-6 h-6 text-primary" />
+              Resetar {targetResetSection?.id ? "Seção" : "Turno"}?
+            </DialogTitle>
+            <DialogDescription className="text-base font-semibold text-muted-foreground/80">
+              Tem certeza que deseja resetar a lista de{" "}
+              <span className="font-extrabold text-primary text-[#ec4899]">
+                {targetResetSection?.name}
+              </span>
+              ? As tarefas ativas serão arquivadas e as recorrentes redefinidas do zero.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="mt-6 flex gap-3 justify-end">
+            <Button
+              variant="ghost"
+              onClick={() => setResetModalOpen(false)}
+              className="rounded-2xl font-bold h-12 px-6"
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleConfirmReset}
+              disabled={restartShift.isPending}
+              className="rounded-2xl font-black h-12 px-6 text-white"
+              style={{
+                background: "linear-gradient(135deg, #ec4899 0%, #a78bfa 100%)",
+                boxShadow: "0 4px 14px rgba(236,72,153,0.25)",
+              }}
+            >
+              {restartShift.isPending ? (
+                <Loader2 className="w-5 h-5 animate-spin mr-2" />
+              ) : (
+                <RefreshCw className="w-4 h-4 mr-2" />
+              )}
+              Confirmar Reset
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
