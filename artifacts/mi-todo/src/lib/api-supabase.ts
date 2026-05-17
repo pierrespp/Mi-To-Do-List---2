@@ -329,11 +329,13 @@ export function useRestartShift() {
       if (!workspace) throw new Error("Workspace not found");
 
       // 1. Arquivar tarefas ativas (escopado por sectionId se fornecido)
+      // Exclui tarefas fixadas (pinned === true) que ainda não foram concluídas (completed === false)
       let archiveQuery = supabase
         .from("tasks")
         .update({ archived: true })
         .eq("workspace_id", workspace.id)
-        .eq("archived", false);
+        .eq("archived", false)
+        .or("pinned.eq.false,completed.eq.true");
 
       if (sectionId !== undefined) {
         archiveQuery = archiveQuery.eq("section_id", sectionId);
