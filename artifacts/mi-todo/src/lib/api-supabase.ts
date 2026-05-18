@@ -377,16 +377,25 @@ export function useReorderTasks() {
     }: {
       slug: string;
       sectionId: number | null;
-      reorderedTasks: { id: number; position: number }[];
+      reorderedTasks: Task[];
     }) => {
-      // Batch upsert em um único roundtrip HTTP atômico e escopado
+      // Batch upsert em um único roundtrip HTTP atômico e escopado com campos completos
       const { error } = await supabase
         .from("tasks")
         .upsert(
           reorderedTasks.map(t => ({ 
             id: t.id, 
-            section_id: sectionId, 
-            position: t.position 
+            workspace_id: t.workspaceId,
+            section_id: t.sectionId,
+            shift_id: t.shiftId,
+            title: t.title,
+            completed: t.completed,
+            priority: t.priority,
+            pinned: t.pinned,
+            recurring: t.recurring,
+            archived: t.archived,
+            position: t.position,
+            created_at: t.createdAt
           })),
           { onConflict: "id" }
         );

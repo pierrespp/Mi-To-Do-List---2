@@ -14,7 +14,7 @@ import {
   getGetWorkspaceStatsQueryKey,
   getListSectionsQueryKey,
 } from "@/lib/api-supabase";
-import { useState, KeyboardEvent, useEffect, useRef } from "react";
+import React, { useState, KeyboardEvent, useEffect, useRef, forwardRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Check, Plus, Trash2, Heart, Star, Sparkles, Loader2, Pin, Calendar, AlertCircle, RefreshCw, Menu, X, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -38,6 +38,7 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
+  DragOverlay,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -404,64 +405,63 @@ const QUOTES = [
   "Proud of you today 💜",
 ];
 
-interface SortableTaskCardProps {
+interface TaskCardVisualProps {
   task: any;
-  idx: number;
   sectionMap: Map<number, any>;
   isRainbow: boolean;
-  completingId: number | null;
-  handleToggleTask: (id: number, completed: boolean) => void;
-  onDeleteRequest: (id: number, title: string) => void;
-  slug: string;
-  queryClient: any;
+  completingId?: number | null;
+  handleToggleTask?: (id: number, completed: boolean) => void;
+  onDeleteRequest?: (id: number, title: string) => void;
+  style?: React.CSSProperties;
+  className?: string;
+  dragHandleProps?: any;
+  isOverlay?: boolean;
 }
 
-function SortableTaskCard({
+const TaskCardVisual = forwardRef<HTMLDivElement, TaskCardVisualProps>(({
   task,
-  idx,
   sectionMap,
   isRainbow,
-  completingId,
+  completingId = null,
   handleToggleTask,
   onDeleteRequest,
-  slug,
-  queryClient,
-}: SortableTaskCardProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: task.id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.35 : task.completed ? 0.55 : 1,
-    background: task.completed ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.72)",
-    animationDelay: `${idx * 0.04}s`,
-    transitionProperty: "transform, opacity, background-color, border-color, box-shadow",
-  };
-
+  style,
+  className = "",
+  dragHandleProps,
+  isOverlay = false,
+}, ref) => {
+  if (!task) return null;
   const sectionInfo = task.sectionId != null ? sectionMap.get(task.sectionId) : null;
   const pal = sectionInfo?.palette;
   const isCompleting = completingId === task.id;
   const isImportant = sectionInfo?.name?.toLowerCase().includes("import");
 
+  const baseStyle: React.CSSProperties = {
+    ...style,
+    background: isOverlay
+      ? (task.completed ? "rgba(255,255,255,0.45)" : "rgba(255,255,255,0.85)")
+      : style?.background || (task.completed ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.72)"),
+    boxShadow: isOverlay 
+      ? "0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04), 0 0 0 1px rgba(236,72,153,0.15)"
+      : undefined,
+    transform: isOverlay ? "scale(1.03)" : style?.transform,
+    transition: isOverlay ? "transform 0.15s ease" : style?.transition,
+  };
+
   return (
     <div
-      ref={setNodeRef}
-      style={style}
-      className={`flex items-center gap-4 p-5 rounded-3xl glass-card transition-all duration-300 task-card-enter ${isImportant && isRainbow ? "important-section-card" : ""
-        }`}
+      ref={ref}
+      style={baseStyle}
+      className={`flex items-center gap-4 p-5 rounded-3xl glass-card transition-all duration-300 ${
+        isImportant && isRainbow ? "important-section-card" : ""
+      } ${isOverlay ? "cursor-grabbing border-primary/20 shadow-2xl" : ""} ${className}`}
     >
       {/* Alça de Arrasto Visual (Grip) */}
       <div
-        {...attributes}
-        {...listeners}
-        className="cursor-grab active:cursor-grabbing p-1 text-muted-foreground/40 hover:text-primary transition-colors flex-shrink-0"
+        {...dragHandleProps}
+        className={`p-1 text-muted-foreground/40 hover:text-primary transition-colors flex-shrink-0 ${
+          isOverlay ? "cursor-grabbing text-primary" : "cursor-grab active:cursor-grabbing"
+        }`}
         aria-label="Arrastar para reordenar"
       >
         <GripVertical className="w-4 h-4" />
@@ -470,7 +470,8 @@ function SortableTaskCard({
       {/* Botão de Concluir */}
       <div className="relative flex-shrink-0">
         <button
-          onClick={() => handleToggleTask(task.id, task.completed)}
+          onClick={() => handleToggleTask?.(task.id, task.completed)}
+          disabled={isOverlay}
           className="w-8 h-8 rounded-full border-2 border-primary/30 flex items-center justify-center relative hover:scale-105 active:scale-95 transition-all overflow-hidden"
           style={isRainbow && pal ? { borderColor: pal.border, background: task.completed ? pal.bg : undefined } : undefined}
         >
@@ -544,7 +545,8 @@ function SortableTaskCard({
           </>
         )}
         <button
-          onClick={() => onDeleteRequest(task.id, task.title)}
+          onClick={() => onDeleteRequest?.(task.id, task.title)}
+          disabled={isOverlay}
           className="w-11 h-11 lg:w-8 lg:h-8 rounded-full flex items-center justify-center text-muted-foreground transition-all ml-1"
           style={{ transition: "all 0.2s" }}
           onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(239,68,68,0.1)"; (e.currentTarget as HTMLElement).style.color = "#dc2626"; }}
@@ -554,6 +556,61 @@ function SortableTaskCard({
         </button>
       </div>
     </div>
+  );
+});
+TaskCardVisual.displayName = "TaskCardVisual";
+
+interface SortableTaskCardProps {
+  task: any;
+  idx: number;
+  sectionMap: Map<number, any>;
+  isRainbow: boolean;
+  completingId: number | null;
+  handleToggleTask: (id: number, completed: boolean) => void;
+  onDeleteRequest: (id: number, title: string) => void;
+  slug: string;
+  queryClient: any;
+}
+
+function SortableTaskCard({
+  task,
+  idx,
+  sectionMap,
+  isRainbow,
+  completingId,
+  handleToggleTask,
+  onDeleteRequest,
+}: SortableTaskCardProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: task.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.35 : 1,
+    animationDelay: `${idx * 0.04}s`,
+    transitionProperty: "transform, opacity, background-color, border-color, box-shadow",
+  };
+
+  return (
+    <TaskCardVisual
+      ref={setNodeRef}
+      task={task}
+      sectionMap={sectionMap}
+      isRainbow={isRainbow}
+      completingId={completingId}
+      handleToggleTask={handleToggleTask}
+      onDeleteRequest={onDeleteRequest}
+      style={style}
+      className="task-card-enter"
+      dragHandleProps={{ ...attributes, ...listeners }}
+    />
   );
 }
 
@@ -579,6 +636,7 @@ export default function WorkspacePage() {
   const [completingId, setCompletingId] = useState<number | null>(null);
   const [mascotMood, setMascotMood] = useState<"idle" | "cheer">("idle");
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [activeId, setActiveId] = useState<number | null>(null);
 
   const createTask = useCreateTask();
   const updateTask = useUpdateTask();
@@ -646,7 +704,16 @@ export default function WorkspacePage() {
     })
   );
 
+  const handleDragStart = (event: any) => {
+    setActiveId(event.active.id as number);
+  };
+
+  const handleDragCancel = () => {
+    setActiveId(null);
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
+    setActiveId(null);
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
@@ -665,7 +732,7 @@ export default function WorkspacePage() {
       const movedTasks = arrayMove(sectionTasks, oldIndex, newIndex);
 
       const reorderedTasksPayload = movedTasks.map((t, idx) => ({
-        id: t.id,
+        ...t,
         position: idx,
       }));
 
@@ -1064,6 +1131,8 @@ export default function WorkspacePage() {
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
+                onDragStart={handleDragStart}
+                onDragCancel={handleDragCancel}
                 onDragEnd={handleDragEnd}
               >
                 <SortableContext
@@ -1087,12 +1156,24 @@ export default function WorkspacePage() {
                     ))}
                   </div>
                 </SortableContext>
+                <DragOverlay>
+                  {activeId ? (
+                    <TaskCardVisual
+                      task={tasks?.find(t => t.id === activeId)}
+                      sectionMap={sectionMap}
+                      isRainbow={isRainbow}
+                      isOverlay
+                    />
+                  ) : null}
+                </DragOverlay>
               </DndContext>
             ) : (
               /* ── ALL TASKS VIEW - MULTIPLE INDEPENDENT SORTABLE CONTEXTS ── */
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
+                onDragStart={handleDragStart}
+                onDragCancel={handleDragCancel}
                 onDragEnd={handleDragEnd}
               >
                 <div className="space-y-8">
@@ -1162,6 +1243,16 @@ export default function WorkspacePage() {
                     </div>
                   )}
                 </div>
+                <DragOverlay>
+                  {activeId ? (
+                    <TaskCardVisual
+                      task={tasks?.find(t => t.id === activeId)}
+                      sectionMap={sectionMap}
+                      isRainbow={isRainbow}
+                      isOverlay
+                    />
+                  ) : null}
+                </DragOverlay>
               </DndContext>
             )}
           </div>
