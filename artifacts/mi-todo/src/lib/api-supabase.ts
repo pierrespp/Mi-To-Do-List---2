@@ -196,6 +196,7 @@ export function useListTasks(slug: string, options?: any) {
         .select("*")
         .eq("workspace_id", workspace.id)
         .eq("archived", false)
+        .order("position", { ascending: true })
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data || []).map(mapTask);
@@ -375,7 +376,7 @@ export function useReorderTasks() {
       reorderedTasks,
     }: {
       slug: string;
-      sectionId: number;
+      sectionId: number | null;
       reorderedTasks: { id: number; position: number }[];
     }) => {
       // Batch upsert em um único roundtrip HTTP atômico e escopado

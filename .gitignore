@@ -11,21 +11,31 @@ out-tsc
 # dependencies
 node_modules
 
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
-
 # IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+.vscode/
+
+# Assets & Agent
+attached_assets/
+.agent/
+.agent_backups/
+.gemini/
+
+# Generated / heavy media
+artifacts/**/*.mp4
+artifacts/**/*.mov
+artifacts/**/*.webm
+artifacts/**/recordings/
+artifacts/**/screenshots/
+artifacts/**/tmp/
+artifacts/**/.cache/
+
+# Raw or backup image exports
+artifacts/**/*-backup.png
+artifacts/**/*-backup.webp
+artifacts/**/*-raw.png
+artifacts/**/*-raw.webp
+artifacts/**/*.bak
+artifacts/**/*.tmp
 
 # misc
 /.sass-cache
@@ -48,12 +58,6 @@ Thumbs.db
 .cache/
 .local/
 
-# Assets & Agent
-attached_assets/
-.agent/
-.agent_backups/
-.gemini/
-
 # Security
 .env
 .env.local
@@ -61,4 +65,17 @@ attached_assets/
 .replit-artifact/
 *.log
 
+# Local databases / dumps
+*.db
+*.sqlite
+*.sqlite3
+*.dump
+*dump*.sql
+*backup*.sql
+*export*.sql
 
+# Source maps from builds
+dist/**/*.map
+build/**/*.map
+artifacts/**/dist/**/*.map
+artifacts/**/build/**/*.map

@@ -1,8 +1,8 @@
 import { useParams } from "wouter";
-import { 
-  useGetWorkspace, 
-  useListSections, 
-  useListTasks, 
+import {
+  useGetWorkspace,
+  useListSections,
+  useListTasks,
   useGetWorkspaceStats,
   useCreateTask,
   useUpdateTask,
@@ -50,12 +50,12 @@ import { CSS } from "@dnd-kit/utilities";
 
 /* ─── Section colour palette ─────────────────────────────────── */
 const PALETTES = [
-  { bg: "rgba(252,165,165,0.22)",  border: "rgba(252,165,165,0.5)",  text: "#dc2626", glow: "rgba(252,165,165,0.45)"  },
-  { bg: "rgba(253,224,71,0.22)",   border: "rgba(253,224,71,0.55)",  text: "#b45309", glow: "rgba(253,224,71,0.45)"   },
-  { bg: "rgba(196,181,253,0.25)",  border: "rgba(196,181,253,0.5)",  text: "#7c3aed", glow: "rgba(196,181,253,0.45)"  },
-  { bg: "rgba(103,232,249,0.2)",   border: "rgba(103,232,249,0.5)",  text: "#0891b2", glow: "rgba(103,232,249,0.4)"   },
-  { bg: "rgba(134,239,172,0.2)",   border: "rgba(134,239,172,0.5)",  text: "#15803d", glow: "rgba(134,239,172,0.4)"   },
-  { bg: "rgba(249,168,212,0.22)",  border: "rgba(249,168,212,0.5)",  text: "#be185d", glow: "rgba(249,168,212,0.45)"  },
+  { bg: "rgba(252,165,165,0.22)", border: "rgba(252,165,165,0.5)", text: "#dc2626", glow: "rgba(252,165,165,0.45)" },
+  { bg: "rgba(253,224,71,0.22)", border: "rgba(253,224,71,0.55)", text: "#b45309", glow: "rgba(253,224,71,0.45)" },
+  { bg: "rgba(196,181,253,0.25)", border: "rgba(196,181,253,0.5)", text: "#7c3aed", glow: "rgba(196,181,253,0.45)" },
+  { bg: "rgba(103,232,249,0.2)", border: "rgba(103,232,249,0.5)", text: "#0891b2", glow: "rgba(103,232,249,0.4)" },
+  { bg: "rgba(134,239,172,0.2)", border: "rgba(134,239,172,0.5)", text: "#15803d", glow: "rgba(134,239,172,0.4)" },
+  { bg: "rgba(249,168,212,0.22)", border: "rgba(249,168,212,0.5)", text: "#be185d", glow: "rgba(249,168,212,0.45)" },
 ];
 
 /* ─── Main bunny mascot ───────────────────────────────────────── */
@@ -77,9 +77,9 @@ function KawaiiMascot({ size = 96, mood = "happy" }: { size?: number; mood?: "ha
       <ellipse cx="86" cy="91" rx="9" ry="5.5" fill="#f9a8d4" opacity="0.55" />
       <ellipse cx="60" cy="94" rx="4" ry="3" fill="#e87dab" />
       {mood === "cheer" ? (
-        <path d="M 52 100 Q 60 110 68 100" stroke="#e87dab" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+        <path d="M 52 100 Q 60 110 68 100" stroke="#e87dab" strokeWidth="2.5" fill="none" strokeLinecap="round" />
       ) : (
-        <path d="M 54 100 Q 60 107 66 100" stroke="#e87dab" strokeWidth="2" fill="none" strokeLinecap="round"/>
+        <path d="M 54 100 Q 60 107 66 100" stroke="#e87dab" strokeWidth="2" fill="none" strokeLinecap="round" />
       )}
       <text x="94" y="62" fontSize="14" fill="#f9a8d4" opacity="0.9">✦</text>
       <text x="10" y="60" fontSize="10" fill="#c4b5fd" opacity="0.8">✦</text>
@@ -104,14 +104,14 @@ function StarKawaii({ size = 44 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
       <polygon points="30,4 36,22 55,22 41,33 46,51 30,40 14,51 19,33 5,22 24,22"
-        fill="#fde68a" stroke="#fbbf24" strokeWidth="1.5" strokeLinejoin="round"/>
+        fill="#fde68a" stroke="#fbbf24" strokeWidth="1.5" strokeLinejoin="round" />
       <circle cx="24" cy="27" r="3" fill="#1a0033" />
       <circle cx="36" cy="27" r="3" fill="#1a0033" />
       <circle cx="25" cy="26" r="1.2" fill="white" />
       <circle cx="37" cy="26" r="1.2" fill="white" />
       <ellipse cx="19" cy="32" rx="4" ry="2.5" fill="#f9a8d4" opacity="0.5" />
       <ellipse cx="41" cy="32" rx="4" ry="2.5" fill="#f9a8d4" opacity="0.5" />
-      <path d="M 25 34 Q 30 39 35 34" stroke="#f59e0b" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+      <path d="M 25 34 Q 30 39 35 34" stroke="#f59e0b" strokeWidth="1.5" fill="none" strokeLinecap="round" />
     </svg>
   );
 }
@@ -130,7 +130,7 @@ function CloudKawaii({ size = 52 }: { size?: number }) {
       <circle cx="47" cy="35" r="3" fill="#1a0033" />
       <circle cx="34" cy="34" r="1.2" fill="white" />
       <circle cx="48" cy="34" r="1.2" fill="white" />
-      <path d="M 35 41 Q 40 46 45 41" stroke="#a78bfa" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+      <path d="M 35 41 Q 40 46 45 41" stroke="#a78bfa" strokeWidth="1.5" fill="none" strokeLinecap="round" />
     </svg>
   );
 }
@@ -140,7 +140,7 @@ function HeartKawaii({ size = 44 }: { size?: number }) {
   return (
     <svg width={size} height={size * 0.95} viewBox="0 0 60 57" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M30 52 C6 37 4 10 20 8 C25 7 30 14 30 14 C30 14 35 7 40 8 C56 10 54 37 30 52Z"
-        fill="#fda4af" stroke="#fb7185" strokeWidth="1.5"/>
+        fill="#fda4af" stroke="#fb7185" strokeWidth="1.5" />
       <path d="M30 52 C6 37 4 10 20 8 C25 7 30 14 30 14 C30 14 35 7 40 8 C56 10 54 37 30 52Z"
         fill="url(#heartGrad)" />
       <circle cx="23" cy="25" r="3" fill="#1a0033" />
@@ -149,7 +149,7 @@ function HeartKawaii({ size = 44 }: { size?: number }) {
       <circle cx="38" cy="24" r="1.2" fill="white" />
       <ellipse cx="17" cy="30" rx="4" ry="2.5" fill="#fff" opacity="0.45" />
       <ellipse cx="43" cy="30" rx="4" ry="2.5" fill="#fff" opacity="0.45" />
-      <path d="M 25 33 Q 30 38 35 33" stroke="#ec4899" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+      <path d="M 25 33 Q 30 38 35 33" stroke="#ec4899" strokeWidth="1.5" fill="none" strokeLinecap="round" />
       <defs>
         <linearGradient id="heartGrad" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="rgba(253,164,175,0.5)" />
@@ -183,7 +183,7 @@ function SparkBurst() {
           borderRadius: "50%",
           background: p.color,
           marginLeft: i % 2 === 0 ? -3.5 : -2.5,
-          marginTop:  i % 2 === 0 ? -3.5 : -2.5,
+          marginTop: i % 2 === 0 ? -3.5 : -2.5,
           animation: `${p.anim} 0.55s cubic-bezier(0.22,1,0.36,1) forwards`,
           animationDelay: `${i * 0.018}s`,
           boxShadow: `0 0 5px ${p.color}`,
@@ -212,8 +212,8 @@ function ProgressRing({ value, total, size = 72 }: { value: number; total: numbe
   return (
     <div style={{ position: "relative", width: size, height: size }}>
       <svg width={size} height={size} style={{ transform: "rotate(-90deg)" }}>
-        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="rgba(236,72,153,0.12)" strokeWidth={8} />
-        <circle cx={size/2} cy={size/2} r={r} fill="none"
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(236,72,153,0.12)" strokeWidth={8} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none"
           stroke="url(#ringGrad)" strokeWidth={8}
           strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"
           style={{ transition: "stroke-dasharray 0.6s cubic-bezier(0.34,1.56,0.64,1)" }} />
@@ -234,18 +234,18 @@ function ProgressRing({ value, total, size = 72 }: { value: number; total: numbe
 
 /* ─── Enhanced Blob + Sticker Background ─────────────────────── */
 const STICKERS = [
-  { emoji: "🌸", top: "7%",  right: "4%",  size: 30, opacity: 0.28, anim: "drift 7s ease-in-out infinite",    delay: "0s",   blur: "0.5px" },
-  { emoji: "☁️", top: "18%", left: "2%",   size: 28, opacity: 0.22, anim: "floatUp 8s ease-in-out infinite",  delay: "1.2s", blur: "1px"   },
-  { emoji: "💖", top: "42%", right: "2%",  size: 26, opacity: 0.26, anim: "sway 5s ease-in-out infinite",     delay: "0.5s", blur: "0.5px" },
-  { emoji: "🎀", top: "65%", left: "1.5%", size: 28, opacity: 0.22, anim: "drift 9s ease-in-out infinite",    delay: "2s",   blur: "1px"   },
-  { emoji: "⭐", top: "78%", right: "5%",  size: 24, opacity: 0.3,  anim: "twinkle 4s ease-in-out infinite",  delay: "1.5s", blur: "0"     },
-  { emoji: "✨", top: "28%", left: "3%",   size: 22, opacity: 0.25, anim: "sparkBurst 3.5s ease-in-out infinite", delay: "0.8s", blur: "0" },
-  { emoji: "🌈", top: "88%", right: "10%", size: 32, opacity: 0.18, anim: "floatUp 11s ease-in-out infinite", delay: "3s",   blur: "1px"   },
-  { emoji: "🦋", top: "55%", left: "2%",   size: 24, opacity: 0.2,  anim: "sway 6s ease-in-out infinite",     delay: "1s",   blur: "0.5px" },
-  { emoji: "🌟", top: "12%", left: "30%",  size: 20, opacity: 0.18, anim: "twinkle 5s ease-in-out infinite",  delay: "2.5s", blur: "0"     },
-  { emoji: "💫", top: "50%", right: "8%",  size: 20, opacity: 0.22, anim: "orbit 8s linear infinite",         delay: "0s",   blur: "0"     },
-  { emoji: "🌺", top: "33%", right: "6%",  size: 22, opacity: 0.2,  anim: "drift 10s ease-in-out infinite",   delay: "4s",   blur: "1px"   },
-  { emoji: "💝", top: "72%", left: "5%",   size: 22, opacity: 0.22, anim: "floatUp 6s ease-in-out infinite",  delay: "0.3s", blur: "0"     },
+  { emoji: "🌸", top: "7%", right: "4%", size: 30, opacity: 0.28, anim: "drift 7s ease-in-out infinite", delay: "0s", blur: "0.5px" },
+  { emoji: "☁️", top: "18%", left: "2%", size: 28, opacity: 0.22, anim: "floatUp 8s ease-in-out infinite", delay: "1.2s", blur: "1px" },
+  { emoji: "💖", top: "42%", right: "2%", size: 26, opacity: 0.26, anim: "sway 5s ease-in-out infinite", delay: "0.5s", blur: "0.5px" },
+  { emoji: "🎀", top: "65%", left: "1.5%", size: 28, opacity: 0.22, anim: "drift 9s ease-in-out infinite", delay: "2s", blur: "1px" },
+  { emoji: "⭐", top: "78%", right: "5%", size: 24, opacity: 0.3, anim: "twinkle 4s ease-in-out infinite", delay: "1.5s", blur: "0" },
+  { emoji: "✨", top: "28%", left: "3%", size: 22, opacity: 0.25, anim: "sparkBurst 3.5s ease-in-out infinite", delay: "0.8s", blur: "0" },
+  { emoji: "🌈", top: "88%", right: "10%", size: 32, opacity: 0.18, anim: "floatUp 11s ease-in-out infinite", delay: "3s", blur: "1px" },
+  { emoji: "🦋", top: "55%", left: "2%", size: 24, opacity: 0.2, anim: "sway 6s ease-in-out infinite", delay: "1s", blur: "0.5px" },
+  { emoji: "🌟", top: "12%", left: "30%", size: 20, opacity: 0.18, anim: "twinkle 5s ease-in-out infinite", delay: "2.5s", blur: "0" },
+  { emoji: "💫", top: "50%", right: "8%", size: 20, opacity: 0.22, anim: "orbit 8s linear infinite", delay: "0s", blur: "0" },
+  { emoji: "🌺", top: "33%", right: "6%", size: 22, opacity: 0.2, anim: "drift 10s ease-in-out infinite", delay: "4s", blur: "1px" },
+  { emoji: "💝", top: "72%", left: "5%", size: 22, opacity: 0.22, anim: "floatUp 6s ease-in-out infinite", delay: "0.3s", blur: "0" },
 ];
 
 function BlobBackground() {
@@ -364,7 +364,7 @@ function SidebarStickers() {
   const items = [
     { emoji: "🌸", top: 10, right: 10, size: 20, anim: "twinkle 4s ease-in-out infinite", delay: "0s" },
     { emoji: "✨", top: 38, right: 16, size: 14, anim: "sparkBurst 3s ease-in-out infinite", delay: "0.5s" },
-    { emoji: "💫", top: 60, right: 8,  size: 16, anim: "floatUp 5s ease-in-out infinite",   delay: "1s"  },
+    { emoji: "💫", top: 60, right: 8, size: 16, anim: "floatUp 5s ease-in-out infinite", delay: "1s" },
   ];
   return (
     <div className="blob-bg" style={{ position: "absolute", top: 0, right: 0, width: 40, height: 90, pointerEvents: "none" }}>
@@ -383,12 +383,12 @@ function SidebarStickers() {
 function RainbowArc() {
   return (
     <svg viewBox="0 0 300 160" width="260" style={{ opacity: 0.35, position: "absolute", top: -20, left: "50%", transform: "translateX(-50%)", zIndex: 0 }}>
-      <path d="M 15 148 Q 150 -15 285 148" stroke="#ec4899" strokeWidth="11" fill="none" strokeLinecap="round"/>
-      <path d="M 32 148 Q 150 8 268 148"   stroke="#f97316" strokeWidth="9"  fill="none" strokeLinecap="round"/>
-      <path d="M 50 148 Q 150 30 250 148"  stroke="#fbbf24" strokeWidth="7"  fill="none" strokeLinecap="round"/>
-      <path d="M 68 148 Q 150 50 232 148"  stroke="#22c55e" strokeWidth="5"  fill="none" strokeLinecap="round"/>
-      <path d="M 86 148 Q 150 68 214 148"  stroke="#06b6d4" strokeWidth="4"  fill="none" strokeLinecap="round"/>
-      <path d="M 104 148 Q 150 84 196 148" stroke="#a78bfa" strokeWidth="3"  fill="none" strokeLinecap="round"/>
+      <path d="M 15 148 Q 150 -15 285 148" stroke="#ec4899" strokeWidth="11" fill="none" strokeLinecap="round" />
+      <path d="M 32 148 Q 150 8 268 148" stroke="#f97316" strokeWidth="9" fill="none" strokeLinecap="round" />
+      <path d="M 50 148 Q 150 30 250 148" stroke="#fbbf24" strokeWidth="7" fill="none" strokeLinecap="round" />
+      <path d="M 68 148 Q 150 50 232 148" stroke="#22c55e" strokeWidth="5" fill="none" strokeLinecap="round" />
+      <path d="M 86 148 Q 150 68 214 148" stroke="#06b6d4" strokeWidth="4" fill="none" strokeLinecap="round" />
+      <path d="M 104 148 Q 150 84 196 148" stroke="#a78bfa" strokeWidth="3" fill="none" strokeLinecap="round" />
     </svg>
   );
 }
@@ -398,9 +398,9 @@ const QUOTES = [
   "You're doing amazing ✨",
   "One task at a time 💖",
   "Progress, not perfection 🌸",
-  "You've got this, bb 🌟",
-  "Making magic happen ✦",
-  "Small steps = big magic 🌈",
+  "Bom trabalho, amor!! 🌟",
+  "Arrasou! ✦",
+  "Jubileu teria orgulho de você🌈",
   "Proud of you today 💜",
 ];
 
@@ -411,7 +411,7 @@ interface SortableTaskCardProps {
   isRainbow: boolean;
   completingId: number | null;
   handleToggleTask: (id: number, completed: boolean) => void;
-  deleteTask: any;
+  onDeleteRequest: (id: number, title: string) => void;
   slug: string;
   queryClient: any;
 }
@@ -423,7 +423,7 @@ function SortableTaskCard({
   isRainbow,
   completingId,
   handleToggleTask,
-  deleteTask,
+  onDeleteRequest,
   slug,
   queryClient,
 }: SortableTaskCardProps) {
@@ -454,9 +454,8 @@ function SortableTaskCard({
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center gap-4 p-5 rounded-3xl glass-card transition-all duration-300 task-card-enter ${
-        isImportant && isRainbow ? "important-section-card" : ""
-      }`}
+      className={`flex items-center gap-4 p-5 rounded-3xl glass-card transition-all duration-300 task-card-enter ${isImportant && isRainbow ? "important-section-card" : ""
+        }`}
     >
       {/* Alça de Arrasto Visual (Grip) */}
       <div
@@ -545,14 +544,7 @@ function SortableTaskCard({
           </>
         )}
         <button
-          onClick={() => {
-            deleteTask.mutate({ slug, taskId: task.id }, {
-              onSuccess: () => {
-                queryClient.invalidateQueries({ queryKey: getListTasksQueryKey(slug) });
-                queryClient.invalidateQueries({ queryKey: getGetWorkspaceStatsQueryKey(slug) });
-              }
-            });
-          }}
+          onClick={() => onDeleteRequest(task.id, task.title)}
           className="w-11 h-11 lg:w-8 lg:h-8 rounded-full flex items-center justify-center text-muted-foreground transition-all ml-1"
           style={{ transition: "all 0.2s" }}
           onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(239,68,68,0.1)"; (e.currentTarget as HTMLElement).style.color = "#dc2626"; }}
@@ -597,6 +589,8 @@ export default function WorkspacePage() {
 
   const [resetModalOpen, setResetModalOpen] = useState(false);
   const [targetResetSection, setTargetResetSection] = useState<{ id: number | null; name: string } | null>(null);
+  const [deleteTaskModalOpen, setDeleteTaskModalOpen] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<{ id: number; title: string } | null>(null);
 
   const handleOpenResetConfirmModal = (sectionId: number | null, sectionName: string) => {
     setTargetResetSection({ id: sectionId, name: sectionName });
@@ -605,7 +599,7 @@ export default function WorkspacePage() {
 
   const handleConfirmReset = () => {
     if (!targetResetSection) return;
-    
+
     restartShift.mutate(
       { slug, sectionId: targetResetSection.id || undefined },
       {
@@ -616,6 +610,26 @@ export default function WorkspacePage() {
             petBridge.turnRestart();
           }
           setResetModalOpen(false);
+        }
+      }
+    );
+  };
+
+  const handleOpenDeleteConfirmModal = (taskId: number, taskTitle: string) => {
+    setTaskToDelete({ id: taskId, title: taskTitle });
+    setDeleteTaskModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!taskToDelete) return;
+    deleteTask.mutate(
+      { slug, taskId: taskToDelete.id },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getListTasksQueryKey(slug) });
+          queryClient.invalidateQueries({ queryKey: getGetWorkspaceStatsQueryKey(slug) });
+          setDeleteTaskModalOpen(false);
+          setTaskToDelete(null);
         }
       }
     );
@@ -640,7 +654,6 @@ export default function WorkspacePage() {
     if (!activeTask) return;
 
     const targetSectionId = activeTask.sectionId;
-    if (targetSectionId == null) return;
 
     const sectionTasks = tasks?.filter(t => t.sectionId === targetSectionId) || [];
     sectionTasks.sort((a, b) => a.position - b.position);
@@ -650,7 +663,7 @@ export default function WorkspacePage() {
 
     if (oldIndex !== -1 && newIndex !== -1) {
       const movedTasks = arrayMove(sectionTasks, oldIndex, newIndex);
-      
+
       const reorderedTasksPayload = movedTasks.map((t, idx) => ({
         id: t.id,
         position: idx,
@@ -680,11 +693,13 @@ export default function WorkspacePage() {
     if (e.key === "Enter" && newTaskTitle.trim()) {
       createTask.mutate(
         { slug, data: { title: newTaskTitle.trim(), sectionId: selectedSectionId, priority: "medium" } },
-        { onSuccess: () => {
-          setNewTaskTitle("");
-          queryClient.invalidateQueries({ queryKey: getListTasksQueryKey(slug) });
-          queryClient.invalidateQueries({ queryKey: getGetWorkspaceStatsQueryKey(slug) });
-        }}
+        {
+          onSuccess: () => {
+            setNewTaskTitle("");
+            queryClient.invalidateQueries({ queryKey: getListTasksQueryKey(slug) });
+            queryClient.invalidateQueries({ queryKey: getGetWorkspaceStatsQueryKey(slug) });
+          }
+        }
       );
     }
   };
@@ -693,11 +708,13 @@ export default function WorkspacePage() {
     if (e.key === "Enter" && newSectionName.trim()) {
       createSection.mutate(
         { slug, data: { name: newSectionName.trim(), emoji: "✨" } },
-        { onSuccess: () => {
-          setNewSectionName("");
-          setIsAddingSection(false);
-          queryClient.invalidateQueries({ queryKey: getListSectionsQueryKey(slug) });
-        }}
+        {
+          onSuccess: () => {
+            setNewSectionName("");
+            setIsAddingSection(false);
+            queryClient.invalidateQueries({ queryKey: getListSectionsQueryKey(slug) });
+          }
+        }
       );
     }
   };
@@ -724,6 +741,12 @@ export default function WorkspacePage() {
   };
 
   const filteredTasks = tasks?.filter(t => selectedSectionId ? t.sectionId === selectedSectionId : true) || [];
+  const sortedTasks = [...filteredTasks].sort((a, b) => {
+    if (a.position !== b.position) {
+      return a.position - b.position;
+    }
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
   const completionPct = stats && stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
   const isImportantsSection = sections?.find(s => s.id === selectedSectionId)?.name?.toLowerCase().includes("import");
 
@@ -795,7 +818,7 @@ export default function WorkspacePage() {
           {/* Kawaii deco strip */}
           {isRainbow && (
             <div className="flex gap-1 mt-2 pl-7 text-sm" style={{ opacity: 0.5 }}>
-              {["🌸","💖","⭐","✨","🎀"].map((s, i) => (
+              {["🌸", "💖", "⭐", "✨", "🎀"].map((s, i) => (
                 <span key={i} style={{
                   animation: `floatUp ${3 + i * 0.5}s ease-in-out infinite`,
                   animationDelay: `${i * 0.25}s`,
@@ -928,7 +951,7 @@ export default function WorkspacePage() {
               <KawaiiMascot size={52} mood={mascotMood} />
             </div>
             <div className="flex gap-1 text-base" style={{ opacity: 0.4 }}>
-              {["💜","🌸","💜"].map((s, i) => (
+              {["💜", "🌸", "💜"].map((s, i) => (
                 <span key={i} style={{ animation: `twinkle ${3 + i}s ease-in-out infinite`, animationDelay: `${i * 0.4}s`, display: "inline-block" }}>{s}</span>
               ))}
             </div>
@@ -1009,7 +1032,7 @@ export default function WorkspacePage() {
                           animationDelay: `${i * -1.5}s`,
                           marginLeft: -8, marginBottom: -8,
                         }}>
-                          {["⭐","✨","💖"][i]}
+                          {["⭐", "✨", "💖"][i]}
                         </div>
                       ))}
                     </>
@@ -1025,7 +1048,7 @@ export default function WorkspacePage() {
                 {/* Sticker row */}
                 {isRainbow && (
                   <div className="flex gap-3 text-2xl" style={{ opacity: 0.55 }}>
-                    {["✦","🌸","🌈","💖","🎀","✦"].map((s, i) => (
+                    {["✦", "🌸", "🌈", "💖", "🎀", "✦"].map((s, i) => (
                       <span key={i} style={{
                         animation: `floatUp ${2.5 + i * 0.35}s ease-in-out infinite`,
                         animationDelay: `${i * 0.28}s`,
@@ -1044,11 +1067,11 @@ export default function WorkspacePage() {
                 onDragEnd={handleDragEnd}
               >
                 <SortableContext
-                  items={filteredTasks.map(t => t.id)}
+                  items={sortedTasks.map(t => t.id)}
                   strategy={verticalListSortingStrategy}
                 >
                   <div className="space-y-3">
-                    {filteredTasks.map((task, idx) => (
+                    {sortedTasks.map((task, idx) => (
                       <SortableTaskCard
                         key={task.id}
                         task={task}
@@ -1057,7 +1080,7 @@ export default function WorkspacePage() {
                         isRainbow={isRainbow}
                         completingId={completingId}
                         handleToggleTask={handleToggleTask}
-                        deleteTask={deleteTask}
+                        onDeleteRequest={handleOpenDeleteConfirmModal}
                         slug={slug}
                         queryClient={queryClient}
                       />
@@ -1074,7 +1097,7 @@ export default function WorkspacePage() {
               >
                 <div className="space-y-8">
                   {sections?.map((section) => {
-                    const sectionTasks = filteredTasks.filter(t => t.sectionId === section.id);
+                    const sectionTasks = sortedTasks.filter(t => t.sectionId === section.id);
                     if (sectionTasks.length === 0) return null;
 
                     sectionTasks.sort((a, b) => a.position - b.position);
@@ -1100,7 +1123,7 @@ export default function WorkspacePage() {
                                 isRainbow={isRainbow}
                                 completingId={completingId}
                                 handleToggleTask={handleToggleTask}
-                                deleteTask={deleteTask}
+                                onDeleteRequest={handleOpenDeleteConfirmModal}
                                 slug={slug}
                                 queryClient={queryClient}
                               />
@@ -1110,17 +1133,17 @@ export default function WorkspacePage() {
                       </div>
                     );
                   })}
-                  
+
                   {/* Tarefas órfãs (sem seção associada, se houver) */}
-                  {filteredTasks.filter(t => t.sectionId === null).length > 0 && (
+                  {sortedTasks.filter(t => t.sectionId === null).length > 0 && (
                     <div className="space-y-3">
                       <h4 className="text-lg font-black text-foreground/80 px-1">Geral</h4>
                       <SortableContext
-                        items={filteredTasks.filter(t => t.sectionId === null).map(t => t.id)}
+                        items={sortedTasks.filter(t => t.sectionId === null).map(t => t.id)}
                         strategy={verticalListSortingStrategy}
                       >
                         <div className="space-y-3">
-                          {filteredTasks.filter(t => t.sectionId === null).map((task, idx) => (
+                          {sortedTasks.filter(t => t.sectionId === null).map((task, idx) => (
                             <SortableTaskCard
                               key={task.id}
                               task={task}
@@ -1129,7 +1152,7 @@ export default function WorkspacePage() {
                               isRainbow={isRainbow}
                               completingId={completingId}
                               handleToggleTask={handleToggleTask}
-                              deleteTask={deleteTask}
+                              onDeleteRequest={handleOpenDeleteConfirmModal}
                               slug={slug}
                               queryClient={queryClient}
                             />
@@ -1185,6 +1208,53 @@ export default function WorkspacePage() {
                 <RefreshCw className="w-4 h-4 mr-2" />
               )}
               Confirmar Reset
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {/* Modal de Confirmação de Exclusão de Tarefa */}
+      <Dialog open={deleteTaskModalOpen} onOpenChange={setDeleteTaskModalOpen}>
+        <DialogContent className="max-w-md rounded-3xl glass-card border-primary/20 p-6">
+          <DialogHeader className="space-y-3">
+            <DialogTitle className="text-2xl font-black gradient-text flex items-center gap-2" style={{
+              background: "linear-gradient(135deg, #ef4444, #f43f5e)",
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text"
+            }}>
+              <Trash2 className="w-6 h-6 text-red-500" />
+              Excluir Tarefa?
+            </DialogTitle>
+            <DialogDescription className="text-base font-semibold text-muted-foreground/80">
+              Tem certeza que deseja excluir a tarefa{" "}
+              <span className="font-extrabold text-red-500">
+                "{taskToDelete?.title}"
+              </span>
+              ? Esta ação é definitiva e não poderá ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="mt-6 flex gap-3 justify-end">
+            <Button
+              variant="ghost"
+              onClick={() => setDeleteTaskModalOpen(false)}
+              className="rounded-2xl font-bold h-12 px-6"
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleConfirmDelete}
+              disabled={deleteTask.isPending}
+              className="rounded-2xl font-black h-12 px-6 text-white"
+              style={{
+                background: "linear-gradient(135deg, #ef4444 0%, #f43f5e 100%)",
+                boxShadow: "0 4px 14px rgba(239,68,68,0.25)",
+              }}
+            >
+              {deleteTask.isPending ? (
+                <Loader2 className="w-5 h-5 animate-spin mr-2" />
+              ) : (
+                <Trash2 className="w-4 h-4 mr-2" />
+              )}
+              Confirmar Exclusão
             </Button>
           </DialogFooter>
         </DialogContent>
