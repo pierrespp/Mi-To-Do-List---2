@@ -31,12 +31,26 @@ export interface Task {
   archived: boolean;
   position: number;
   createdAt: string;
+  completedAt?: string | null;
 }
 
 export interface WorkspaceStats {
   total: number;
   completed: number;
   pinned: number;
+}
+
+export interface HistoricalTask {
+  title: string;
+  completedAt: string;
+}
+
+export interface DailyHistory {
+  id: number;
+  workspaceId: number;
+  date: string;
+  tasks: HistoricalTask[];
+  createdAt: string;
 }
 
 /* ─── Helpers ────────────────────────────────────────────────── */
@@ -57,6 +71,7 @@ const mapTask = (t: any): Task => ({
   sectionId: t.section_id,
   shiftId: t.shift_id,
   createdAt: t.created_at,
+  completedAt: t.completed_at || null,
 });
 
 /* ─── Query Keys ─────────────────────────────────────────────── */
@@ -329,7 +344,78 @@ export function useRestartShift() {
       
       if (!workspace) throw new Error("Workspace not found");
 
-      // 1. Desmarcar todas as tarefas ativas do workspace/seção (completed = false)
+      // 1. Histórico: Se for reset completo (sem sectionId), capturar as tarefas concluídas ativas
+      if (sectionId === undefined) {
+        const { data: completedTasks } = await supabase
+          .from("tasks")
+          .select("title, completed_at, created_at")
+          .eq("workspace_id", workspace.id)
+          .eq("completed", true)
+          .eq("archived", false);
+
+        if (completedTasks && completedTasks.length > 0) {
+          // Agrupar por data (YYYY-MM-DD)
+          const groups: Record<string, { title: string; completedAt: string }[]> = {};
+          
+          for (const t of completedTasks) {
+            const dateStr = t.completed_at 
+              ? t.completed_at.split('T')[0] 
+              : (t.created_at ? t.created_at.split('T')[0] : new Date().toISOString().split('T')[0]);
+            
+            if (!groups[dateStr]) {
+              groups[dateStr] = [];
+            }
+            
+            groups[dateStr].push({
+              title: t.title,
+              completedAt: t.completed_at || new Date().toISOString()
+            });
+          }
+
+          // Para cada dia de conclusão, salvar de forma cumulativa e segura
+          for (const [dateKey, newTasks] of Object.entries(groups)) {
+            try {
+              // Verificar se já existe histórico para este dia e workspace
+              const { data: existingRecord } = await supabase
+                .from("daily_history")
+                .select("id, tasks")
+                .eq("workspace_id", workspace.id)
+                .eq("date", dateKey)
+                .maybeSingle();
+
+              if (existingRecord) {
+                // Mesclar tarefas sem duplicar por título
+                const existingTasks = Array.isArray(existingRecord.tasks) ? existingRecord.tasks : [];
+                const mergedTasks = [...existingTasks];
+                
+                for (const nt of newTasks) {
+                  if (!mergedTasks.some((et: any) => et.title === nt.title)) {
+                    mergedTasks.push(nt);
+                  }
+                }
+
+                await supabase
+                  .from("daily_history")
+                  .update({ tasks: mergedTasks })
+                  .eq("id", existingRecord.id);
+              } else {
+                // Inserir novo registro histórico
+                await supabase
+                  .from("daily_history")
+                  .insert({
+                    workspace_id: workspace.id,
+                    tasks: newTasks,
+                    date: dateKey
+                  });
+              }
+            } catch (historyError) {
+              console.error(`Falha ao salvar histórico diário para a data ${dateKey}:`, historyError);
+            }
+          }
+        }
+      }
+
+      // 2. Desmarcar todas as tarefas ativas do workspace/seção (completed = false)
       let updateQuery = supabase
         .from("tasks")
         .update({ completed: false })
@@ -341,7 +427,7 @@ export function useRestartShift() {
       }
       await updateQuery;
 
-      // 2. Turno: Se for reset completo (sem sectionId), criar novo turno e associar tarefas ativas
+      // 3. Turno: Se for reset completo (sem sectionId), criar novo turno e associar tarefas ativas
       if (sectionId === undefined) {
         const { data: shift, error: shiftError } = await supabase
           .from("shifts")
@@ -363,6 +449,7 @@ export function useRestartShift() {
     onSuccess: (_, { slug }) => {
       queryClient.invalidateQueries({ queryKey: getListTasksQueryKey(slug) });
       queryClient.invalidateQueries({ queryKey: getGetWorkspaceStatsQueryKey(slug) });
+      queryClient.invalidateQueries({ queryKey: ["daily-history", slug] });
     },
   });
 }
@@ -449,3 +536,39 @@ export function useReorderTasks() {
     },
   });
 }
+
+/* ─── Daily History ─────────────────────────────────────────── */
+export function useListDailyHistory(slug: string) {
+  return useQuery<DailyHistory[]>({
+    queryKey: ["daily-history", slug],
+    queryFn: async () => {
+      const { data: workspace } = await supabase
+        .from("workspaces")
+        .select("id")
+        .eq("slug", slug)
+        .single();
+      
+      if (!workspace) return [];
+
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      const { data, error } = await supabase
+        .from("daily_history")
+        .select("*")
+        .eq("workspace_id", workspace.id)
+        .gte("date", sevenDaysAgo.toISOString().split('T')[0])
+        .order("date", { ascending: false });
+
+      if (error) throw error;
+      return (data || []).map(item => ({
+        id: item.id,
+        workspaceId: item.workspace_id,
+        date: item.date,
+        tasks: item.tasks,
+        createdAt: item.created_at
+      }));
+    }
+  });
+}
+

@@ -13,10 +13,11 @@ import {
   getListTasksQueryKey,
   getGetWorkspaceStatsQueryKey,
   getListSectionsQueryKey,
+  useListDailyHistory,
 } from "@/lib/api-supabase";
 import React, { useState, KeyboardEvent, useEffect, useRef, forwardRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Check, Plus, Trash2, Heart, Star, Sparkles, Loader2, Pin, Calendar, AlertCircle, RefreshCw, Menu, X, GripVertical } from "lucide-react";
+import { Check, Plus, Trash2, Heart, Star, Sparkles, Loader2, Pin, Calendar, AlertCircle, RefreshCw, Menu, X, GripVertical, Clipboard, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -628,6 +629,30 @@ export default function WorkspacePage() {
   const { data: sections, isLoading: sectionsLoading } = useListSections(slug, { query: { enabled: !!slug, queryKey: getListSectionsQueryKey(slug) } });
   const { data: tasks, isLoading: tasksLoading } = useListTasks(slug, { query: { enabled: !!slug, queryKey: getListTasksQueryKey(slug) } });
   const { data: stats } = useGetWorkspaceStats(slug, { query: { enabled: !!slug, queryKey: getGetWorkspaceStatsQueryKey(slug) } });
+  
+  const { data: dailyHistory, isLoading: historyLoading } = useListDailyHistory(slug);
+  const [historyModalOpen, setHistoryModalOpen] = useState(false);
+  const [copiedDayId, setCopiedDayId] = useState<number | null>(null);
+
+  const handleCopyHistoryReport = (day: any) => {
+    const formattedDate = new Date(day.date).toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      timeZone: "UTC"
+    });
+
+    const header = `📅 Relatório de Tarefas Concluídas - ${formattedDate}\n`;
+    const separator = `-`.repeat(header.length - 1) + `\n`;
+    const count = `✨ Concluídas hoje: ${day.tasks.length} tarefa(s)\n`;
+    const taskList = day.tasks.map((t: any) => `✓ ${t.title}`).join(`\n`);
+
+    const fullText = `${header}${separator}${count}\n${taskList}`;
+
+    navigator.clipboard.writeText(fullText);
+    setCopiedDayId(day.id);
+    setTimeout(() => setCopiedDayId(null), 2000);
+  };
 
   const [selectedSectionId, setSelectedSectionId] = useState<number | null>(null);
   const [newTaskTitle, setNewTaskTitle] = useState("");
@@ -992,6 +1017,13 @@ export default function WorkspacePage() {
               <Plus className="w-5 h-5" /> Nova Seção
             </button>
           )}
+
+          <button onClick={() => { setHistoryModalOpen(true); setDrawerOpen(false); }}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left font-bold text-muted-foreground hover:text-primary transition-all mt-1"
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.5)"; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}>
+            <History className="w-5 h-5 text-primary" /> Histórico 7 Dias
+          </button>
         </div>
 
         {/* Sidebar mascot — reacts when a task is completed */}
@@ -1289,6 +1321,99 @@ export default function WorkspacePage() {
                 <RefreshCw className="w-4 h-4 mr-2" />
               )}
               Confirmar Reset
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Histórico dos Últimos 7 Dias */}
+      <Dialog open={historyModalOpen} onOpenChange={setHistoryModalOpen}>
+        <DialogContent className="max-w-2xl rounded-3xl glass-card border-primary/20 p-6 max-h-[85vh] flex flex-col">
+          <DialogHeader className="space-y-2 flex-shrink-0">
+            <DialogTitle className="text-2xl font-black gradient-text flex items-center gap-2">
+              <History className="w-6 h-6 text-primary" />
+              Histórico dos Últimos 7 Dias ✦
+            </DialogTitle>
+            <DialogDescription className="text-base font-semibold text-muted-foreground/80">
+              Veja as tarefas que foram concluídas a cada reinicialização de turno.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex-1 overflow-y-auto py-4 space-y-4 my-2 pr-1" style={{ maxHeight: "calc(85vh - 180px)" }}>
+            {historyLoading ? (
+              <div className="flex flex-col items-center justify-center py-12 gap-3">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                <span className="text-sm font-semibold text-muted-foreground">Carregando histórico mágico...</span>
+              </div>
+            ) : !dailyHistory || dailyHistory.length === 0 ? (
+              <div className="text-center py-12 flex flex-col items-center gap-3">
+                <span className="text-4xl">✨</span>
+                <h4 className="text-lg font-black text-foreground/80">Nenhum turno arquivado ainda!</h4>
+                <p className="text-sm font-semibold text-muted-foreground max-w-xs">
+                  Quando você clicar em "Reiniciar Turno", as tarefas que concluiu hoje aparecerão aqui.
+                </p>
+              </div>
+            ) : (
+              dailyHistory.map((day) => {
+                const formattedDate = new Date(day.date).toLocaleDateString("pt-BR", {
+                  weekday: "long",
+                  day: "2-digit",
+                  month: "2-digit",
+                  timeZone: "UTC"
+                });
+
+                const isCopied = copiedDayId === day.id;
+
+                return (
+                  <div key={day.id} className="p-4 rounded-2xl glass-card border border-primary/10 transition-all hover:border-primary/25 space-y-3 relative overflow-hidden"
+                    style={{ background: isRainbow ? "rgba(255,255,255,0.4)" : "rgba(236,72,153,0.02)" }}>
+                    
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="min-w-0">
+                        <span className="text-xs font-black text-primary/70 uppercase tracking-wider block">
+                          Turno Finalizado
+                        </span>
+                        <h4 className="text-lg font-black text-foreground capitalize truncate">
+                          {formattedDate}
+                        </h4>
+                      </div>
+                      
+                      <Button
+                        onClick={() => handleCopyHistoryReport(day)}
+                        size="sm"
+                        className="rounded-full font-bold h-9 px-4 flex items-center gap-1.5 transition-all text-white border-0"
+                        style={{
+                          background: isCopied ? "linear-gradient(135deg, #10b981 0%, #059669 100%)" : "linear-gradient(135deg, #ec4899 0%, #a78bfa 100%)",
+                          boxShadow: "0 2px 8px rgba(236,72,153,0.15)",
+                        }}
+                      >
+                        {isCopied ? <Check className="w-3.5 h-3.5" /> : <Clipboard className="w-3.5 h-3.5" />}
+                        {isCopied ? "Copiado! ✧" : "Copiar"}
+                      </Button>
+                    </div>
+
+                    <div className="w-full h-px bg-primary/5" />
+
+                    <div className="space-y-1.5 pl-1">
+                      {day.tasks.map((task, idx) => (
+                        <div key={idx} className="flex items-start gap-2 text-base lg:text-sm font-semibold text-muted-foreground">
+                          <span className="text-primary mt-0.5">✓</span>
+                          <span className="text-foreground/90">{task.title}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          <DialogFooter className="flex-shrink-0 pt-3 border-t border-primary/5">
+            <Button
+              onClick={() => setHistoryModalOpen(false)}
+              className="rounded-2xl font-bold h-12 px-6 w-full lg:w-auto"
+            >
+              Fechar
             </Button>
           </DialogFooter>
         </DialogContent>
