@@ -647,8 +647,6 @@ export default function WorkspacePage() {
 
   const [resetModalOpen, setResetModalOpen] = useState(false);
   const [targetResetSection, setTargetResetSection] = useState<{ id: number | null; name: string } | null>(null);
-  const [deleteTaskModalOpen, setDeleteTaskModalOpen] = useState(false);
-  const [taskToDelete, setTaskToDelete] = useState<{ id: number; title: string } | null>(null);
 
   const handleOpenResetConfirmModal = (sectionId: number | null, sectionName: string) => {
     setTargetResetSection({ id: sectionId, name: sectionName });
@@ -673,21 +671,13 @@ export default function WorkspacePage() {
     );
   };
 
-  const handleOpenDeleteConfirmModal = (taskId: number, taskTitle: string) => {
-    setTaskToDelete({ id: taskId, title: taskTitle });
-    setDeleteTaskModalOpen(true);
-  };
-
-  const handleConfirmDelete = () => {
-    if (!taskToDelete) return;
+  const handleDeleteTask = (taskId: number) => {
     deleteTask.mutate(
-      { slug, taskId: taskToDelete.id },
+      { slug, taskId },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListTasksQueryKey(slug) });
           queryClient.invalidateQueries({ queryKey: getGetWorkspaceStatsQueryKey(slug) });
-          setDeleteTaskModalOpen(false);
-          setTaskToDelete(null);
         }
       }
     );
@@ -1149,7 +1139,7 @@ export default function WorkspacePage() {
                         isRainbow={isRainbow}
                         completingId={completingId}
                         handleToggleTask={handleToggleTask}
-                        onDeleteRequest={handleOpenDeleteConfirmModal}
+                        onDeleteRequest={handleDeleteTask}
                         slug={slug}
                         queryClient={queryClient}
                       />
@@ -1204,7 +1194,7 @@ export default function WorkspacePage() {
                                 isRainbow={isRainbow}
                                 completingId={completingId}
                                 handleToggleTask={handleToggleTask}
-                                onDeleteRequest={handleOpenDeleteConfirmModal}
+                                onDeleteRequest={handleDeleteTask}
                                 slug={slug}
                                 queryClient={queryClient}
                               />
@@ -1233,7 +1223,7 @@ export default function WorkspacePage() {
                               isRainbow={isRainbow}
                               completingId={completingId}
                               handleToggleTask={handleToggleTask}
-                              onDeleteRequest={handleOpenDeleteConfirmModal}
+                              onDeleteRequest={handleDeleteTask}
                               slug={slug}
                               queryClient={queryClient}
                             />
@@ -1303,53 +1293,7 @@ export default function WorkspacePage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      {/* Modal de Confirmação de Exclusão de Tarefa */}
-      <Dialog open={deleteTaskModalOpen} onOpenChange={setDeleteTaskModalOpen}>
-        <DialogContent className="max-w-md rounded-3xl glass-card border-primary/20 p-6">
-          <DialogHeader className="space-y-3">
-            <DialogTitle className="text-2xl font-black gradient-text flex items-center gap-2" style={{
-              background: "linear-gradient(135deg, #ef4444, #f43f5e)",
-              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text"
-            }}>
-              <Trash2 className="w-6 h-6 text-red-500" />
-              Excluir Tarefa?
-            </DialogTitle>
-            <DialogDescription className="text-base font-semibold text-muted-foreground/80">
-              Tem certeza que deseja excluir a tarefa{" "}
-              <span className="font-extrabold text-red-500">
-                "{taskToDelete?.title}"
-              </span>
-              ? Esta ação é definitiva e não poderá ser desfeita.
-            </DialogDescription>
-          </DialogHeader>
-
-          <DialogFooter className="mt-6 flex gap-3 justify-end">
-            <Button
-              variant="ghost"
-              onClick={() => setDeleteTaskModalOpen(false)}
-              className="rounded-2xl font-bold h-12 px-6"
-            >
-              Cancelar
-            </Button>
-            <Button
-              onClick={handleConfirmDelete}
-              disabled={deleteTask.isPending}
-              className="rounded-2xl font-black h-12 px-6 text-white"
-              style={{
-                background: "linear-gradient(135deg, #ef4444 0%, #f43f5e 100%)",
-                boxShadow: "0 4px 14px rgba(239,68,68,0.25)",
-              }}
-            >
-              {deleteTask.isPending ? (
-                <Loader2 className="w-5 h-5 animate-spin mr-2" />
-              ) : (
-                <Trash2 className="w-4 h-4 mr-2" />
-              )}
-              Confirmar Exclusão
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Modal de Confirmação de Exclusão de Tarefa Removido para Ação Direta */}
     </div>
   );
 }
