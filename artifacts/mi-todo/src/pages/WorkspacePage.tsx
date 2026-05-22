@@ -70,6 +70,36 @@ function renderStickerIcon(emoji: string, size: number = 24) {
     default: return <span>{emoji}</span>;
   }
 }
+
+function renderSectionSticker(emoji: string, isSelected: boolean) {
+  const filter = isSelected ? "brightness(0) invert(1)" : "none";
+  let src = "";
+  switch (emoji) {
+    case "☀️":
+      src = `${import.meta.env.BASE_URL}kawaii_sun_icon.png`;
+      break;
+    case "✨":
+      src = `${import.meta.env.BASE_URL}kawaii_weekly_icon.png`;
+      break;
+    case "⭐":
+      src = `${import.meta.env.BASE_URL}kawaii_important_icon.png`;
+      break;
+    case "🌙":
+      src = `${import.meta.env.BASE_URL}kawaii_moon_icon.png`;
+      break;
+    default:
+      return <span className="flex-shrink-0">{emoji}</span>;
+  }
+  return (
+    <img
+      src={src}
+      alt={emoji}
+      className="w-7 h-7 object-contain flex-shrink-0"
+      style={{ filter, transition: "filter 0.2s ease" }}
+    />
+  );
+}
+
 import {
   DndContext,
   closestCenter,
@@ -996,7 +1026,16 @@ export default function WorkspacePage() {
             onMouseEnter={e => { if (selectedSectionId !== null) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.6)"; }}
             onMouseLeave={e => { if (selectedSectionId !== null) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
           >
-            <Star className="w-5 h-5 flex-shrink-0" /> Todas as Tarefas
+            <img
+              src={`${import.meta.env.BASE_URL}kawaii_all_tasks.png`}
+              alt="Todas as Tarefas"
+              className="w-7 h-7 object-contain flex-shrink-0"
+              style={{
+                filter: selectedSectionId === null ? "brightness(0) invert(1)" : "none",
+                transition: "filter 0.2s ease"
+              }}
+            />
+            Todas as Tarefas
           </button>
 
           {sections?.map((section, i) => {
@@ -1020,7 +1059,7 @@ export default function WorkspacePage() {
                   onMouseEnter={e => { if (!isSelected) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.6)"; }}
                   onMouseLeave={e => { if (!isSelected) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
                 >
-                  <span className="flex-shrink-0">{section.emoji}</span>
+                  {renderSectionSticker(section.emoji, isSelected)}
                   <span className="truncate">{section.name}</span>
                   {isImportant && <span className="ml-auto text-xs opacity-70">⭐</span>}
                 </button>
@@ -1050,7 +1089,12 @@ export default function WorkspacePage() {
               className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left font-bold text-muted-foreground hover:text-primary transition-all mt-1"
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.5)"; }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}>
-              <Plus className="w-5 h-5" /> Nova Seção
+              <img
+                src={`${import.meta.env.BASE_URL}kawaii_new_section.png`}
+                alt="Nova Seção"
+                className="w-7 h-7 object-contain flex-shrink-0"
+              />
+              Nova Seção
             </button>
           )}
 
@@ -1058,7 +1102,12 @@ export default function WorkspacePage() {
             className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left font-bold text-muted-foreground hover:text-primary transition-all mt-1"
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.5)"; }}
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}>
-            <History className="w-5 h-5 text-primary" /> Histórico 7 Dias
+            <img
+              src={`${import.meta.env.BASE_URL}kawaii_history_icon.png`}
+              alt="Histórico 7 Dias"
+              className="w-7 h-7 object-contain flex-shrink-0"
+            />
+            Histórico 7 Dias
           </button>
         </div>
 
