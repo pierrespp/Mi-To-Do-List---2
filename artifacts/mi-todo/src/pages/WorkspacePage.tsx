@@ -88,6 +88,13 @@ function renderSectionSticker(emoji: string, isSelected: boolean) {
     case "🌙":
       src = `${import.meta.env.BASE_URL}kawaii_moon_icon.png`;
       break;
+    case "🎵":
+    case "🎶":
+    case "🎧":
+    case "📻":
+    case "🎼":
+      src = `${import.meta.env.BASE_URL}kawaii_music_icon.png`;
+      break;
     default:
       return <span className="flex-shrink-0">{emoji}</span>;
   }
@@ -261,18 +268,21 @@ function ProgressRing({ value, total, size = 72 }: { value: number; total: numbe
 
 /* ─── Enhanced Blob + Sticker Background ─────────────────────── */
 const STICKER_ASSETS = [
-  // Novos mascotes "Mi Pets" grandes e fofos (Centralizados/Internos na medida certa)
-  { src: "kawaii_pet_mi.png", top: "70%", left: "22%", size: 110, opacity: 0.32, anim: "floatUp 9s ease-in-out infinite", delay: "0.5s" }, // Sapinho Mi
-  { src: "kawaii_pet_kuro.png", top: "12%", right: "16%", size: 105, opacity: 0.30, anim: "sway 8s ease-in-out infinite", delay: "1.5s" }, // Gatinho Kuro
+  // Todos os 5 mascotes "Mi Pets" grandes, charmosos e distribuídos harmonicamente
+  { src: "kawaii_pet_mi.png", top: "70%", left: "22%", size: 105, opacity: 0.32, anim: "floatUp 9s ease-in-out infinite", delay: "0.5s" }, // Sapinho Mi (Verde)
+  { src: "kawaii_pet_kuro.png", top: "12%", right: "16%", size: 100, opacity: 0.30, anim: "sway 8s ease-in-out infinite", delay: "1.5s" }, // Gatinho Kuro (Indigo)
+  { src: "kawaii_pet_pi.png", top: "14%", left: "14%", size: 100, opacity: 0.32, anim: "drift 10s ease-in-out infinite", delay: "2.0s" }, // Pinguim Pi (Chubby)
+  { src: "kawaii_pet_mila.png", top: "78%", right: "14%", size: 100, opacity: 0.32, anim: "sway 9s ease-in-out infinite", delay: "0.8s" }, // Raposinha Mila (Branca)
+  { src: "kawaii_pet_gabiru.png", top: "46%", right: "8%", size: 105, opacity: 0.30, anim: "floatUp 11s ease-in-out infinite", delay: "1.8s" }, // Gato cinza Gabiru (Lazy)
 
-  // Stickers originais reajustados para serem maiores e mais imersivos
-  { src: "kawaii_cloud.png", top: "18%", left: "3%", size: 85, opacity: 0.28, anim: "floatUp 10s ease-in-out infinite", delay: "1.2s" },
-  { src: "kawaii_moon.png", top: "26%", left: "2%", size: 70, opacity: 0.30, anim: "drift 11s ease-in-out infinite", delay: "0.8s" },
-  { src: "kawaii_star.png", top: "8%", left: "32%", size: 65, opacity: 0.32, anim: "twinkle 6s ease-in-out infinite", delay: "2.5s" },
-  { src: "kawaii_cupcake.png", top: "33%", right: "5%", size: 75, opacity: 0.28, anim: "drift 12s ease-in-out infinite", delay: "4s" },
-  { src: "kawaii_cat.png", top: "65%", left: "2%", size: 75, opacity: 0.30, anim: "sway 9s ease-in-out infinite", delay: "2s" },
+  // Stickers originais reajustados para serem maiores e preencherem os espaços vazios
+  { src: "kawaii_cloud.png", top: "32%", left: "2%", size: 85, opacity: 0.28, anim: "floatUp 10s ease-in-out infinite", delay: "1.2s" },
+  { src: "kawaii_moon.png", top: "54%", left: "1.5%", size: 70, opacity: 0.30, anim: "drift 11s ease-in-out infinite", delay: "0.8s" },
+  { src: "kawaii_star.png", top: "8%", left: "34%", size: 65, opacity: 0.32, anim: "twinkle 6s ease-in-out infinite", delay: "2.5s" },
+  { src: "kawaii_cupcake.png", top: "30%", right: "2%", size: 75, opacity: 0.28, anim: "drift 12s ease-in-out infinite", delay: "4s" },
+  { src: "kawaii_cat.png", top: "88%", left: "1.5%", size: 75, opacity: 0.30, anim: "sway 9s ease-in-out infinite", delay: "2s" },
 
-  // Micro decorações para equilibrar
+  // Micro decorações de equilíbrio
   { src: "kawaii_mini_flower.png", top: "6%", right: "4%", size: 34, opacity: 0.35, anim: "drift 7s ease-in-out infinite", delay: "0s" },
   { src: "kawaii_heart.png", top: "45%", right: "3%", size: 38, opacity: 0.35, anim: "sway 5s ease-in-out infinite", delay: "0.5s" },
   { src: "kawaii_mini_butterfly.png", top: "55%", left: "4%", size: 32, opacity: 0.32, anim: "sway 7s ease-in-out infinite", delay: "1.0s" },
@@ -1186,7 +1196,7 @@ export default function WorkspacePage() {
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.5)"; }}
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}>
             <img
-              src={`${import.meta.env.BASE_URL}kawaii_history_icon.png`}
+              src={`${import.meta.env.BASE_URL}kawaii_all_tasks.png`}
               alt="Histórico"
               className="w-10 h-10 object-contain flex-shrink-0"
             />
@@ -1204,15 +1214,15 @@ export default function WorkspacePage() {
             onMouseEnter={e => { if (activeTab !== "music") (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.5)"; }}
             onMouseLeave={e => { if (activeTab !== "music") (e.currentTarget as HTMLElement).style.background = "transparent"; }}>
             <img
-              src={`${import.meta.env.BASE_URL}kawaii_moon_icon.png`}
-              alt="Música de Foco"
+              src={`${import.meta.env.BASE_URL}kawaii_music_icon.png`}
+              alt="Música"
               className="w-10 h-10 object-contain flex-shrink-0"
               style={{
                 filter: activeTab === "music" ? "brightness(0) invert(1)" : "none",
                 transition: "filter 0.2s ease"
               }}
             />
-            Música de Foco
+            Música
           </button>
 
           {/* Botões de Ações de Reiniciar Integrados */}
@@ -1573,7 +1583,11 @@ export default function WorkspacePage() {
         <DialogContent className="max-w-2xl rounded-3xl glass-card border-primary/20 p-6 max-h-[85vh] flex flex-col">
           <DialogHeader className="space-y-2 flex-shrink-0">
             <DialogTitle className="text-2xl font-black gradient-text flex items-center gap-2">
-              <History className="w-6 h-6 text-primary" />
+              <img
+                src={`${import.meta.env.BASE_URL}kawaii_history_icon.png`}
+                alt="Histórico"
+                className="w-8 h-8 object-contain flex-shrink-0"
+              />
               Histórico de Turnos ✦
             </DialogTitle>
             <DialogDescription className="text-base font-semibold text-muted-foreground/80">

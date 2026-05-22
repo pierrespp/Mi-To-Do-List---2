@@ -85,7 +85,7 @@ export default function MusicPlayer() {
             <Music className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <h3 className="text-xl font-black gradient-text">Música de Foco</h3>
+            <h3 className="text-xl font-black gradient-text">Música</h3>
             <p className="text-xs font-semibold text-muted-foreground/80">Sua trilha sonora para produtividade ✦</p>
           </div>
         </div>
