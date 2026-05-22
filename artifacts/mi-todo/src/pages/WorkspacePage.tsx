@@ -101,7 +101,7 @@ const PALETTES = [
 
 /* ─── Main frog mascot ────────────────────────────────────────── */
 function KawaiiMascot({ size = 96, mood = "happy" }: { size?: number; mood?: "happy" | "idle" | "cheer" }) {
-  const src = mood === "cheer" ? "/mascote_cheer.png" : "/mascote_idle.png";
+  const src = `${import.meta.env.BASE_URL}${mood === "cheer" ? "mascote_cheer.png" : "mascote_idle.png"}`;
   return (
     <img
       src={src}
@@ -121,7 +121,7 @@ function KawaiiMascot({ size = 96, mood = "happy" }: { size?: number; mood?: "ha
 function StarKawaii({ size = 44 }: { size?: number }) {
   return (
     <img
-      src="/kawaii_star.png"
+      src={`${import.meta.env.BASE_URL}kawaii_star.png`}
       alt="Estrela Kawaii"
       width={size}
       height={size}
@@ -134,7 +134,7 @@ function StarKawaii({ size = 44 }: { size?: number }) {
 function CloudKawaii({ size = 52 }: { size?: number }) {
   return (
     <img
-      src="/kawaii_cloud.png"
+      src={`${import.meta.env.BASE_URL}kawaii_cloud.png`}
       alt="Nuvem Kawaii"
       width={size}
       height={size}
@@ -147,7 +147,7 @@ function CloudKawaii({ size = 52 }: { size?: number }) {
 function HeartKawaii({ size = 44 }: { size?: number }) {
   return (
     <img
-      src="/kawaii_heart.png"
+      src={`${import.meta.env.BASE_URL}kawaii_heart.png`}
       alt="Coração Kawaii"
       width={size}
       height={size}
@@ -230,16 +230,16 @@ function ProgressRing({ value, total, size = 72 }: { value: number; total: numbe
 
 /* ─── Enhanced Blob + Sticker Background ─────────────────────── */
 const STICKER_ASSETS = [
-  { src: "/kawaii_mini_flower.png", top: "7%", right: "4%", size: 30, opacity: 0.35, anim: "drift 7s ease-in-out infinite", delay: "0s" },
-  { src: "/kawaii_cloud.png", top: "18%", left: "2%", size: 34, opacity: 0.3, anim: "floatUp 8s ease-in-out infinite", delay: "1.2s" },
-  { src: "/kawaii_heart.png", top: "42%", right: "2%", size: 28, opacity: 0.35, anim: "sway 5s ease-in-out infinite", delay: "0.5s" },
-  { src: "/kawaii_mini_butterfly.png", top: "55%", left: "2%", size: 26, opacity: 0.32, anim: "sway 6s ease-in-out infinite", delay: "1.0s" },
-  { src: "/kawaii_mini_rainbow.png", top: "88%", right: "10%", size: 36, opacity: 0.3, anim: "floatUp 11s ease-in-out infinite", delay: "3s" },
-  { src: "/kawaii_mini_star.png", top: "78%", right: "5%", size: 24, opacity: 0.4, anim: "twinkle 4s ease-in-out infinite", delay: "1.5s" },
-  { src: "/kawaii_star.png", top: "12%", left: "30%", size: 30, opacity: 0.32, anim: "twinkle 5s ease-in-out infinite", delay: "2.5s" },
-  { src: "/kawaii_cat.png", top: "65%", left: "1.5%", size: 36, opacity: 0.35, anim: "drift 9s ease-in-out infinite", delay: "2s" },
-  { src: "/kawaii_cupcake.png", top: "33%", right: "6%", size: 34, opacity: 0.3, anim: "drift 10s ease-in-out infinite", delay: "4s" },
-  { src: "/kawaii_moon.png", top: "28%", left: "3%", size: 32, opacity: 0.35, anim: "floatUp 8s ease-in-out infinite", delay: "0.8s" },
+  { src: "kawaii_mini_flower.png", top: "7%", right: "4%", size: 30, opacity: 0.35, anim: "drift 7s ease-in-out infinite", delay: "0s" },
+  { src: "kawaii_cloud.png", top: "18%", left: "2%", size: 34, opacity: 0.3, anim: "floatUp 8s ease-in-out infinite", delay: "1.2s" },
+  { src: "kawaii_heart.png", top: "42%", right: "2%", size: 28, opacity: 0.35, anim: "sway 5s ease-in-out infinite", delay: "0.5s" },
+  { src: "kawaii_mini_butterfly.png", top: "55%", left: "2%", size: 26, opacity: 0.32, anim: "sway 6s ease-in-out infinite", delay: "1.0s" },
+  { src: "kawaii_mini_rainbow.png", top: "88%", right: "10%", size: 36, opacity: 0.3, anim: "floatUp 11s ease-in-out infinite", delay: "3s" },
+  { src: "kawaii_mini_star.png", top: "78%", right: "5%", size: 24, opacity: 0.4, anim: "twinkle 4s ease-in-out infinite", delay: "1.5s" },
+  { src: "kawaii_star.png", top: "12%", left: "30%", size: 30, opacity: 0.32, anim: "twinkle 5s ease-in-out infinite", delay: "2.5s" },
+  { src: "kawaii_cat.png", top: "65%", left: "1.5%", size: 36, opacity: 0.35, anim: "drift 9s ease-in-out infinite", delay: "2s" },
+  { src: "kawaii_cupcake.png", top: "33%", right: "6%", size: 34, opacity: 0.3, anim: "drift 10s ease-in-out infinite", delay: "4s" },
+  { src: "kawaii_moon.png", top: "28%", left: "3%", size: 32, opacity: 0.35, anim: "floatUp 8s ease-in-out infinite", delay: "0.8s" },
 ];
 
 function BlobBackground() {
@@ -301,7 +301,7 @@ function BlobBackground() {
           }}
         >
           <img
-            src={s.src}
+            src={import.meta.env.BASE_URL + s.src}
             alt="sticker"
             style={{
               width: "100%",
@@ -374,16 +374,16 @@ function KawaiiCornerDecos() {
 /* ─── Sidebar accent stickers ────────────────────────────────── */
 function SidebarStickers() {
   const items = [
-    { src: "/kawaii_mini_flower.png", top: 10, right: 10, size: 22, anim: "twinkle 4s ease-in-out infinite", delay: "0s" },
-    { src: "/kawaii_mini_star.png", top: 38, right: 16, size: 16, anim: "sparkBurst 3s ease-in-out infinite", delay: "0.5s" },
-    { src: "/kawaii_mini_butterfly.png", top: 60, right: 8, size: 18, anim: "floatUp 5s ease-in-out infinite", delay: "1s" },
+    { src: "kawaii_mini_flower.png", top: 10, right: 10, size: 22, anim: "twinkle 4s ease-in-out infinite", delay: "0s" },
+    { src: "kawaii_mini_star.png", top: 38, right: 16, size: 16, anim: "sparkBurst 3s ease-in-out infinite", delay: "0.5s" },
+    { src: "kawaii_mini_butterfly.png", top: 60, right: 8, size: 18, anim: "floatUp 5s ease-in-out infinite", delay: "1s" },
   ];
   return (
     <div className="blob-bg" style={{ position: "absolute", top: 0, right: 0, width: 40, height: 90, pointerEvents: "none" }}>
       {items.map((it, i) => (
         <img
           key={i}
-          src={it.src}
+          src={import.meta.env.BASE_URL + it.src}
           alt="Sidebar Deco"
           style={{
             position: "absolute",
@@ -917,7 +917,7 @@ export default function WorkspacePage() {
           {workspace?.name?.toLowerCase().includes("noite") && (
             <div className="flex pl-7 mb-2">
               <img
-                src="/kawaii_moon.png"
+                src={`${import.meta.env.BASE_URL}kawaii_moon.png`}
                 alt="Lua de Orgulho"
                 className="w-12 h-12 object-contain"
                 style={{
