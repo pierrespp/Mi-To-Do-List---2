@@ -30,6 +30,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { useTheme } from "@/components/ThemeToggle";
+import MusicPlayer from "@/components/MusicPlayer";
 import { petBridge } from "../../../../src/integrations/petBridge";
 import {
   DangoPrideIcon,
@@ -749,6 +750,7 @@ export default function WorkspacePage() {
   };
 
   const [selectedSectionId, setSelectedSectionId] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<"tasks" | "music">("tasks");
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [newSectionName, setNewSectionName] = useState("");
@@ -993,6 +995,35 @@ export default function WorkspacePage() {
           <X className="w-5 h-5" />
         </button>
 
+        {/* Sidebar mascot — reacts when a task is completed */}
+        {(() => {
+          const isFinished = stats && stats.completed === stats.total && stats.total > 0;
+          const currentMascotMood = isFinished || isInputFocused ? "cheer" : mascotMood;
+          return (
+            <div className="flex flex-col items-center gap-2 mb-4 mt-2">
+              <div
+                className="float-animation"
+                style={{
+                  opacity: 0.85,
+                  transition: "transform 0.3s cubic-bezier(0.34,1.56,0.64,1)",
+                  transform: currentMascotMood === "cheer" ? "scale(1.18) translateY(-4px)" : "scale(1)",
+                }}
+              >
+                <KawaiiMascot size={64} mood={currentMascotMood} />
+              </div>
+              {isRainbow && (
+                <div className="flex gap-1 text-base" style={{ opacity: 0.45 }}>
+                  {["💜", "🌸", "💜"].map((s, i) => (
+                    <span key={i} style={{ animation: `twinkle ${3 + i}s ease-in-out infinite`, animationDelay: `${i * 0.4}s`, display: "inline-block" }}>
+                      {s === "🌸" ? renderStickerIcon(s, 16) : s}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })()}
+
         {/* Workspace name */}
         <div className="mb-6">
           {/* Sleepy Moon decoration for Turno Noite */}
@@ -1067,16 +1098,16 @@ export default function WorkspacePage() {
         {/* Section nav */}
         <div className="flex-1 overflow-y-auto space-y-1.5">
           <button
-            onClick={() => { setSelectedSectionId(null); setDrawerOpen(false); }}
+            onClick={() => { setSelectedSectionId(null); setActiveTab("tasks"); setDrawerOpen(false); }}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left font-bold transition-all duration-200"
-            style={selectedSectionId === null ? {
+            style={activeTab === "tasks" && selectedSectionId === null ? {
               background: "linear-gradient(135deg, #ec4899, #a78bfa)",
               color: "white",
               boxShadow: isRainbow ? "0 4px 16px rgba(236,72,153,0.35)" : "0 2px 10px rgba(236,72,153,0.2)",
               transform: "scale(1.03)",
             } : { color: "var(--color-muted-foreground)" }}
-            onMouseEnter={e => { if (selectedSectionId !== null) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.6)"; }}
-            onMouseLeave={e => { if (selectedSectionId !== null) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+            onMouseEnter={e => { if (activeTab !== "tasks" || selectedSectionId !== null) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.6)"; }}
+            onMouseLeave={e => { if (activeTab !== "tasks" || selectedSectionId !== null) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
           >
             <img
               src={`${import.meta.env.BASE_URL}kawaii_all_tasks.png`}
@@ -1092,12 +1123,12 @@ export default function WorkspacePage() {
 
           {sections?.map((section, i) => {
             const pal = PALETTES[i % PALETTES.length];
-            const isSelected = selectedSectionId === section.id;
+            const isSelected = activeTab === "tasks" && selectedSectionId === section.id;
             const isImportant = section.name.toLowerCase().includes("import");
             return (
               <div key={section.id} className="group/section relative w-full flex items-center justify-between">
                 <button
-                  onClick={() => { setSelectedSectionId(section.id); setDrawerOpen(false); }}
+                  onClick={() => { setSelectedSectionId(section.id); setActiveTab("tasks"); setDrawerOpen(false); }}
                   className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left font-bold transition-all duration-200 pr-10"
                   style={isSelected ? {
                     background: "linear-gradient(135deg, #ec4899, #a78bfa)",
@@ -1162,6 +1193,28 @@ export default function WorkspacePage() {
             Histórico
           </button>
 
+          <button onClick={() => { setActiveTab("music"); setDrawerOpen(false); }}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left font-bold transition-all mt-1"
+            style={activeTab === "music" ? {
+              background: "linear-gradient(135deg, #ec4899, #a78bfa)",
+              color: "white",
+              boxShadow: isRainbow ? "0 4px 16px rgba(236,72,153,0.35)" : "0 2px 10px rgba(236,72,153,0.2)",
+              transform: "scale(1.03)",
+            } : { color: "var(--color-muted-foreground)" }}
+            onMouseEnter={e => { if (activeTab !== "music") (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.5)"; }}
+            onMouseLeave={e => { if (activeTab !== "music") (e.currentTarget as HTMLElement).style.background = "transparent"; }}>
+            <img
+              src={`${import.meta.env.BASE_URL}kawaii_moon_icon.png`}
+              alt="Música de Foco"
+              className="w-10 h-10 object-contain flex-shrink-0"
+              style={{
+                filter: activeTab === "music" ? "brightness(0) invert(1)" : "none",
+                transition: "filter 0.2s ease"
+              }}
+            />
+            Música de Foco
+          </button>
+
           {/* Botões de Ações de Reiniciar Integrados */}
           <div className="pt-2 border-t border-primary/10 mt-2 space-y-1">
             <button
@@ -1206,39 +1259,16 @@ export default function WorkspacePage() {
           </div>
         </div>
 
-        {/* Sidebar mascot — reacts when a task is completed */}
-        {isRainbow && (() => {
-          const isFinished = stats && stats.completed === stats.total && stats.total > 0;
-          const currentMascotMood = isFinished || isInputFocused ? "cheer" : mascotMood;
-          return (
-            <div className="flex flex-col items-center gap-2 mt-4 mb-2">
-              <div
-                className="float-animation"
-                style={{
-                  opacity: 0.82,
-                  transition: "transform 0.3s cubic-bezier(0.34,1.56,0.64,1)",
-                  transform: currentMascotMood === "cheer" ? "scale(1.18) translateY(-4px)" : "scale(1)",
-                }}
-              >
-                <KawaiiMascot size={52} mood={currentMascotMood} />
-              </div>
-              <div className="flex gap-1 text-base" style={{ opacity: 0.4 }}>
-                {["💜", "🌸", "💜"].map((s, i) => (
-                  <span key={i} style={{ animation: `twinkle ${3 + i}s ease-in-out infinite`, animationDelay: `${i * 0.4}s`, display: "inline-block" }}>
-                    {s === "🌸" ? renderStickerIcon(s, 16) : s}
-                  </span>
-                ))}
-              </div>
-            </div>
-          );
-        })()}
+
 
         <div className="mt-auto" />
       </div>
 
       {/* ═══════════════ MAIN AREA ════════════════════════════ */}
       <div className="flex-1 flex flex-col p-4 md:p-8 lg:p-12 pt-20 lg:pt-12 overflow-y-auto" style={{ position: "relative", zIndex: 1 }}>
-        <div className="max-w-3xl w-full mx-auto space-y-8">
+        <div className="max-w-3xl w-full mx-auto">
+          {/* Aba de Tarefas (Keep-Alive via CSS hiding) */}
+          <div className={activeTab === "tasks" ? "space-y-8 animate-fade-in" : "hidden"}>
 
           {/* Header */}
           <header className="flex items-center gap-3">
@@ -1455,6 +1485,12 @@ export default function WorkspacePage() {
                 </DragOverlay>
               </DndContext>
             )}
+          </div>
+          </div>
+
+          {/* Aba de Música (Keep-Alive via CSS hiding para evitar parar música no background) */}
+          <div className={activeTab === "music" ? "animate-fade-in" : "hidden"}>
+            <MusicPlayer />
           </div>
         </div>
       </div>
