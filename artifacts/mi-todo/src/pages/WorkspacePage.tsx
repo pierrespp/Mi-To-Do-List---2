@@ -1238,10 +1238,10 @@ export default function WorkspacePage() {
                 <Loader2 className="w-10 h-10 animate-spin text-primary flex-shrink-0 p-1.5" />
               ) : (
                 <img
-                  src={`${import.meta.env.BASE_URL}kawaii_star.png`}
+                  src={`${import.meta.env.BASE_URL}kawaii_reset_shift_icon.png`}
                   alt="Reiniciar Turno"
                   className="w-10 h-10 object-contain flex-shrink-0 animate-bounce-slow"
-                  style={{ filter: "drop-shadow(0 2px 4px rgba(236,72,153,0.25))" }}
+                  style={{ filter: "drop-shadow(0 2px 4px rgba(236,72,153,0.3))" }}
                 />
               )}
               <span>Reiniciar Turno</span>
@@ -1258,10 +1258,10 @@ export default function WorkspacePage() {
                 <Loader2 className="w-10 h-10 animate-spin text-primary flex-shrink-0 p-1.5" />
               ) : (
                 <img
-                  src={`${import.meta.env.BASE_URL}kawaii_weekly_icon.png`}
+                  src={`${import.meta.env.BASE_URL}kawaii_reset_weekly_icon.png`}
                   alt="Reiniciar Semanais"
                   className="w-10 h-10 object-contain flex-shrink-0 animate-bounce-slow"
-                  style={{ filter: "drop-shadow(0 2px 4px rgba(167,139,250,0.25))" }}
+                  style={{ filter: "drop-shadow(0 2px 4px rgba(34,197,94,0.3))" }}
                 />
               )}
               <span>Reiniciar Semanais</span>

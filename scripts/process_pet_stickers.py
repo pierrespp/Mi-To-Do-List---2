@@ -59,7 +59,9 @@ if __name__ == "__main__":
         "kawaii_music_icon_1779491308984.png": "kawaii_music_icon.png",
         "kawaii_pet_pi_1779491325422.png": "kawaii_pet_pi.png",
         "kawaii_pet_mila_1779491341763.png": "kawaii_pet_mila.png",
-        "kawaii_pet_gabiru_1779491358889.png": "kawaii_pet_gabiru.png"
+        "kawaii_pet_gabiru_1779491358889.png": "kawaii_pet_gabiru.png",
+        "kawaii_reset_shift_icon_1779492095241.png": "kawaii_reset_shift_icon.png",
+        "kawaii_reset_weekly_icon_1779492110640.png": "kawaii_reset_weekly_icon.png"
     }
     
     for gen_name, target_name in mapping.items():
