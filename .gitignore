@@ -79,3 +79,13 @@ dist/**/*.map
 build/**/*.map
 artifacts/**/dist/**/*.map
 artifacts/**/build/**/*.map
+
+# Coverage & Tests
+**/coverage/
+
+# Package Manager
+.pnpm-store/
+.pnpm-debug.log
+
+# Linters & Cache
+.eslintcache
