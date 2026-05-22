@@ -94,7 +94,7 @@ function renderSectionSticker(emoji: string, isSelected: boolean) {
     <img
       src={src}
       alt={emoji}
-      className="w-7 h-7 object-contain flex-shrink-0"
+      className="w-10 h-10 object-contain flex-shrink-0"
       style={{ filter, transition: "filter 0.2s ease" }}
     />
   );
@@ -260,16 +260,23 @@ function ProgressRing({ value, total, size = 72 }: { value: number; total: numbe
 
 /* ─── Enhanced Blob + Sticker Background ─────────────────────── */
 const STICKER_ASSETS = [
-  { src: "kawaii_mini_flower.png", top: "7%", right: "4%", size: 30, opacity: 0.35, anim: "drift 7s ease-in-out infinite", delay: "0s" },
-  { src: "kawaii_cloud.png", top: "18%", left: "2%", size: 34, opacity: 0.3, anim: "floatUp 8s ease-in-out infinite", delay: "1.2s" },
-  { src: "kawaii_heart.png", top: "42%", right: "2%", size: 28, opacity: 0.35, anim: "sway 5s ease-in-out infinite", delay: "0.5s" },
-  { src: "kawaii_mini_butterfly.png", top: "55%", left: "2%", size: 26, opacity: 0.32, anim: "sway 6s ease-in-out infinite", delay: "1.0s" },
-  { src: "kawaii_mini_rainbow.png", top: "88%", right: "10%", size: 36, opacity: 0.3, anim: "floatUp 11s ease-in-out infinite", delay: "3s" },
-  { src: "kawaii_mini_star.png", top: "78%", right: "5%", size: 24, opacity: 0.4, anim: "twinkle 4s ease-in-out infinite", delay: "1.5s" },
-  { src: "kawaii_star.png", top: "12%", left: "30%", size: 30, opacity: 0.32, anim: "twinkle 5s ease-in-out infinite", delay: "2.5s" },
-  { src: "kawaii_cat.png", top: "65%", left: "1.5%", size: 36, opacity: 0.35, anim: "drift 9s ease-in-out infinite", delay: "2s" },
-  { src: "kawaii_cupcake.png", top: "33%", right: "6%", size: 34, opacity: 0.3, anim: "drift 10s ease-in-out infinite", delay: "4s" },
-  { src: "kawaii_moon.png", top: "28%", left: "3%", size: 32, opacity: 0.35, anim: "floatUp 8s ease-in-out infinite", delay: "0.8s" },
+  // Novos mascotes "Mi Pets" grandes e fofos (Centralizados/Internos na medida certa)
+  { src: "kawaii_pet_mi.png", top: "70%", left: "22%", size: 110, opacity: 0.32, anim: "floatUp 9s ease-in-out infinite", delay: "0.5s" }, // Sapinho Mi
+  { src: "kawaii_pet_kuro.png", top: "12%", right: "16%", size: 105, opacity: 0.30, anim: "sway 8s ease-in-out infinite", delay: "1.5s" }, // Gatinho Kuro
+
+  // Stickers originais reajustados para serem maiores e mais imersivos
+  { src: "kawaii_cloud.png", top: "18%", left: "3%", size: 85, opacity: 0.28, anim: "floatUp 10s ease-in-out infinite", delay: "1.2s" },
+  { src: "kawaii_moon.png", top: "26%", left: "2%", size: 70, opacity: 0.30, anim: "drift 11s ease-in-out infinite", delay: "0.8s" },
+  { src: "kawaii_star.png", top: "8%", left: "32%", size: 65, opacity: 0.32, anim: "twinkle 6s ease-in-out infinite", delay: "2.5s" },
+  { src: "kawaii_cupcake.png", top: "33%", right: "5%", size: 75, opacity: 0.28, anim: "drift 12s ease-in-out infinite", delay: "4s" },
+  { src: "kawaii_cat.png", top: "65%", left: "2%", size: 75, opacity: 0.30, anim: "sway 9s ease-in-out infinite", delay: "2s" },
+
+  // Micro decorações para equilibrar
+  { src: "kawaii_mini_flower.png", top: "6%", right: "4%", size: 34, opacity: 0.35, anim: "drift 7s ease-in-out infinite", delay: "0s" },
+  { src: "kawaii_heart.png", top: "45%", right: "3%", size: 38, opacity: 0.35, anim: "sway 5s ease-in-out infinite", delay: "0.5s" },
+  { src: "kawaii_mini_butterfly.png", top: "55%", left: "4%", size: 32, opacity: 0.32, anim: "sway 7s ease-in-out infinite", delay: "1.0s" },
+  { src: "kawaii_mini_rainbow.png", top: "88%", right: "12%", size: 55, opacity: 0.28, anim: "floatUp 12s ease-in-out infinite", delay: "3s" },
+  { src: "kawaii_mini_star.png", top: "78%", right: "5%", size: 30, opacity: 0.40, anim: "twinkle 4s ease-in-out infinite", delay: "1.5s" },
 ];
 
 function BlobBackground() {
@@ -685,6 +692,42 @@ export default function WorkspacePage() {
   const [historyModalOpen, setHistoryModalOpen] = useState(false);
   const [copiedDayId, setCopiedDayId] = useState<number | null>(null);
 
+  const [customResetDate, setCustomResetDate] = useState<string>(new Date().toLocaleDateString("sv-SE"));
+  const [calendarDate, setCalendarDate] = useState(new Date());
+  const [selectedHistoryDay, setSelectedHistoryDay] = useState<any>(null);
+
+  const year = calendarDate.getFullYear();
+  const month = calendarDate.getMonth();
+  const firstDayIndex = new Date(year, month, 1).getDay();
+  const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
+
+  const historyMap = new Map((dailyHistory ?? []).map(day => [day.date, day]));
+
+  const handlePrevMonth = () => {
+    setCalendarDate(new Date(year, month - 1, 1));
+    setSelectedHistoryDay(null);
+  };
+
+  const handleNextMonth = () => {
+    setCalendarDate(new Date(year, month + 1, 1));
+    setSelectedHistoryDay(null);
+  };
+
+  const handleDayClick = (dateString: string) => {
+    const dayRecord = historyMap.get(dateString);
+    if (dayRecord) {
+      setSelectedHistoryDay(dayRecord);
+    } else {
+      setSelectedHistoryDay(null);
+    }
+  };
+
+  const monthNames = [
+    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+  ];
+  const displayedMonthYear = `${monthNames[month]} de ${year}`;
+
   const handleCopyHistoryReport = (day: any) => {
     const formattedDate = new Date(day.date).toLocaleDateString("pt-BR", {
       day: "2-digit",
@@ -727,17 +770,26 @@ export default function WorkspacePage() {
 
   const handleOpenResetConfirmModal = (sectionId: number | null, sectionName: string) => {
     setTargetResetSection({ id: sectionId, name: sectionName });
+    if (sectionId === null) {
+      setCustomResetDate(new Date().toLocaleDateString("sv-SE"));
+    }
     setResetModalOpen(true);
   };
 
   const handleConfirmReset = () => {
     if (!targetResetSection) return;
 
+    const isWeekly = targetResetSection.id === -999;
     restartShift.mutate(
-      { slug, sectionId: targetResetSection.id || undefined },
+      {
+        slug,
+        sectionId: isWeekly || targetResetSection.id === null ? undefined : targetResetSection.id,
+        customDate: targetResetSection.id === null ? customResetDate : undefined,
+        resetWeeklyOnly: isWeekly ? true : undefined,
+      },
       {
         onSuccess: () => {
-          if (targetResetSection.id) {
+          if (isWeekly || targetResetSection.id) {
             petBridge.sectionReset();
           } else {
             petBridge.turnRestart();
@@ -1029,7 +1081,7 @@ export default function WorkspacePage() {
             <img
               src={`${import.meta.env.BASE_URL}kawaii_all_tasks.png`}
               alt="Todas as Tarefas"
-              className="w-7 h-7 object-contain flex-shrink-0"
+              className="w-10 h-10 object-contain flex-shrink-0"
               style={{
                 filter: selectedSectionId === null ? "brightness(0) invert(1)" : "none",
                 transition: "filter 0.2s ease"
@@ -1092,7 +1144,7 @@ export default function WorkspacePage() {
               <img
                 src={`${import.meta.env.BASE_URL}kawaii_new_section.png`}
                 alt="Nova Seção"
-                className="w-7 h-7 object-contain flex-shrink-0"
+                className="w-10 h-10 object-contain flex-shrink-0"
               />
               Nova Seção
             </button>
@@ -1104,11 +1156,54 @@ export default function WorkspacePage() {
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}>
             <img
               src={`${import.meta.env.BASE_URL}kawaii_history_icon.png`}
-              alt="Histórico 7 Dias"
-              className="w-7 h-7 object-contain flex-shrink-0"
+              alt="Histórico"
+              className="w-10 h-10 object-contain flex-shrink-0"
             />
-            Histórico 7 Dias
+            Histórico
           </button>
+
+          {/* Botões de Ações de Reiniciar Integrados */}
+          <div className="pt-2 border-t border-primary/10 mt-2 space-y-1">
+            <button
+              onClick={() => handleOpenResetConfirmModal(null, "Turno Completo")}
+              disabled={restartShift.isPending}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left font-bold text-muted-foreground hover:text-primary transition-all"
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.5)"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+            >
+              {restartShift.isPending ? (
+                <Loader2 className="w-10 h-10 animate-spin text-primary flex-shrink-0 p-1.5" />
+              ) : (
+                <img
+                  src={`${import.meta.env.BASE_URL}kawaii_star.png`}
+                  alt="Reiniciar Turno"
+                  className="w-10 h-10 object-contain flex-shrink-0 animate-bounce-slow"
+                  style={{ filter: "drop-shadow(0 2px 4px rgba(236,72,153,0.25))" }}
+                />
+              )}
+              <span>Reiniciar Turno</span>
+            </button>
+
+            <button
+              onClick={() => handleOpenResetConfirmModal(-999, "Tarefas Semanais")}
+              disabled={restartShift.isPending}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left font-bold text-muted-foreground hover:text-primary transition-all"
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.5)"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+            >
+              {restartShift.isPending ? (
+                <Loader2 className="w-10 h-10 animate-spin text-primary flex-shrink-0 p-1.5" />
+              ) : (
+                <img
+                  src={`${import.meta.env.BASE_URL}kawaii_weekly_icon.png`}
+                  alt="Reiniciar Semanais"
+                  className="w-10 h-10 object-contain flex-shrink-0 animate-bounce-slow"
+                  style={{ filter: "drop-shadow(0 2px 4px rgba(167,139,250,0.25))" }}
+                />
+              )}
+              <span>Reiniciar Semanais</span>
+            </button>
+          </div>
         </div>
 
         {/* Sidebar mascot — reacts when a task is completed */}
@@ -1138,20 +1233,7 @@ export default function WorkspacePage() {
           );
         })()}
 
-        {/* Reiniciar Turno */}
-        <div className="pt-4 mt-auto">
-          <Button className="w-full rounded-2xl h-14 text-base font-black border-0 text-white"
-            style={{
-              background: "linear-gradient(135deg, #ec4899 0%, #a78bfa 60%, #06b6d4 100%)",
-              boxShadow: isRainbow ? "0 4px 20px rgba(236,72,153,0.4), 0 0 40px rgba(167,139,250,0.2)" : "0 4px 14px rgba(236,72,153,0.25)",
-            }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "scale(1.03)"; (e.currentTarget as HTMLElement).style.boxShadow = "0 6px 28px rgba(236,72,153,0.55)"; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = "scale(1)"; (e.currentTarget as HTMLElement).style.boxShadow = isRainbow ? "0 4px 20px rgba(236,72,153,0.4)" : "0 4px 14px rgba(236,72,153,0.25)"; }}
-            onClick={() => handleOpenResetConfirmModal(null, "Turno Completo")}>
-            {restartShift.isPending ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <RefreshCw className="w-5 h-5 mr-2" />}
-            ✨ Reiniciar Turno
-          </Button>
-        </div>
+        <div className="mt-auto" />
       </div>
 
       {/* ═══════════════ MAIN AREA ════════════════════════════ */}
@@ -1382,17 +1464,45 @@ export default function WorkspacePage() {
         <DialogContent className="max-w-md rounded-3xl glass-card border-primary/20 p-6">
           <DialogHeader className="space-y-3">
             <DialogTitle className="text-2xl font-black gradient-text flex items-center gap-2">
-              <RefreshCw className="w-6 h-6 text-primary" />
-              Resetar {targetResetSection?.id ? "Seção" : "Turno"}?
+              <RefreshCw className="w-6 h-6 text-primary animate-spin-slow" />
+              {targetResetSection?.id === -999 ? "Reiniciar Semanais?" : targetResetSection?.id === null ? "Reiniciar Turno? ✨" : "Resetar Seção?"}
             </DialogTitle>
             <DialogDescription className="text-base font-semibold text-muted-foreground/80">
-              Tem certeza que deseja resetar a lista de{" "}
-              <span className="font-extrabold text-primary text-[#ec4899]">
-                {targetResetSection?.name}
-              </span>
-              ? As tarefas ativas serão arquivadas e as recorrentes redefinidas do zero.
+              {targetResetSection?.id === -999 ? (
+                <>
+                  Deseja reiniciar exclusivamente as tarefas das seções{" "}
+                  <span className="font-extrabold text-[#ec4899]">Semanais</span>? 
+                  As tarefas concluídas dessas seções serão limpas para uma nova semana.
+                </>
+              ) : targetResetSection?.id === null ? (
+                <>
+                  Deseja reiniciar seu turno diário? As tarefas das seções normais concluídas serão salvas no histórico.
+                </>
+              ) : (
+                <>
+                  Tem certeza que deseja resetar a lista de{" "}
+                  <span className="font-extrabold text-[#ec4899]">
+                    {targetResetSection?.name}
+                  </span>
+                  ? As tarefas ativas serão arquivadas e as recorrentes redefinidas do zero.
+                </>
+              )}
             </DialogDescription>
           </DialogHeader>
+
+          {targetResetSection?.id === null && (
+            <div className="mt-4 p-4 rounded-2xl bg-primary/5 border border-primary/10 flex flex-col gap-2">
+              <label className="text-sm font-bold text-muted-foreground/80 flex items-center gap-1.5">
+                <Calendar className="w-4 h-4 text-primary" /> Data do Turno:
+              </label>
+              <Input
+                type="date"
+                value={customResetDate}
+                onChange={(e) => setCustomResetDate(e.target.value)}
+                className="rounded-xl border-primary/20 bg-white/80 dark:bg-gray-800/80 font-bold text-center text-lg h-12"
+              />
+            </div>
+          )}
 
           <DialogFooter className="mt-6 flex gap-3 justify-end">
             <Button
@@ -1416,7 +1526,7 @@ export default function WorkspacePage() {
               ) : (
                 <RefreshCw className="w-4 h-4 mr-2" />
               )}
-              Confirmar Reset
+              Confirmar
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1428,14 +1538,14 @@ export default function WorkspacePage() {
           <DialogHeader className="space-y-2 flex-shrink-0">
             <DialogTitle className="text-2xl font-black gradient-text flex items-center gap-2">
               <History className="w-6 h-6 text-primary" />
-              Histórico dos Últimos 7 Dias ✦
+              Histórico de Turnos ✦
             </DialogTitle>
             <DialogDescription className="text-base font-semibold text-muted-foreground/80">
-              Veja as tarefas que foram concluídas a cada reinicialização de turno.
+              Veja as tarefas concluídas a cada reinicialização de turno no calendário.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex-1 overflow-y-auto py-4 space-y-4 my-2 pr-1" style={{ maxHeight: "calc(85vh - 180px)" }}>
+          <div className="flex-1 overflow-y-auto py-4 space-y-6 my-2 pr-1" style={{ maxHeight: "calc(85vh - 180px)" }}>
             {historyLoading ? (
               <div className="flex flex-col items-center justify-center py-12 gap-3">
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -1450,57 +1560,137 @@ export default function WorkspacePage() {
                 </p>
               </div>
             ) : (
-              dailyHistory.map((day) => {
-                const formattedDate = new Date(day.date).toLocaleDateString("pt-BR", {
-                  weekday: "long",
-                  day: "2-digit",
-                  month: "2-digit",
-                  timeZone: "UTC"
-                });
-
-                const isCopied = copiedDayId === day.id;
-
-                return (
-                  <div key={day.id} className="p-4 rounded-2xl glass-card border border-primary/10 transition-all hover:border-primary/25 space-y-3 relative overflow-hidden"
-                    style={{ background: isRainbow ? "rgba(255,255,255,0.4)" : "rgba(236,72,153,0.02)" }}>
-                    
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="min-w-0">
-                        <span className="text-xs font-black text-primary/70 uppercase tracking-wider block">
-                          Turno Finalizado
-                        </span>
-                        <h4 className="text-lg font-black text-foreground capitalize truncate">
-                          {formattedDate}
-                        </h4>
-                      </div>
-                      
-                      <Button
-                        onClick={() => handleCopyHistoryReport(day)}
-                        size="sm"
-                        className="rounded-full font-bold h-9 px-4 flex items-center gap-1.5 transition-all text-white border-0"
-                        style={{
-                          background: isCopied ? "linear-gradient(135deg, #10b981 0%, #059669 100%)" : "linear-gradient(135deg, #ec4899 0%, #a78bfa 100%)",
-                          boxShadow: "0 2px 8px rgba(236,72,153,0.15)",
-                        }}
-                      >
-                        {isCopied ? <Check className="w-3.5 h-3.5" /> : <Clipboard className="w-3.5 h-3.5" />}
-                        {isCopied ? "Copiado! ✧" : "Copiar"}
-                      </Button>
-                    </div>
-
-                    <div className="w-full h-px bg-primary/5" />
-
-                    <div className="space-y-1.5 pl-1">
-                      {day.tasks.map((task, idx) => (
-                        <div key={idx} className="flex items-start gap-2 text-base lg:text-sm font-semibold text-muted-foreground">
-                          <span className="text-primary mt-0.5">✓</span>
-                          <span className="text-foreground/90">{task.title}</span>
-                        </div>
-                      ))}
-                    </div>
+              <div className="space-y-6">
+                {/* Calendário Grid */}
+                <div className="p-4 rounded-3xl bg-white/40 dark:bg-gray-900/40 border border-primary/10 shadow-sm space-y-4">
+                  {/* Cabeçalho do Calendário com navegação */}
+                  <div className="flex items-center justify-between">
+                    <button
+                      onClick={handlePrevMonth}
+                      className="p-2 rounded-xl hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all font-bold text-lg"
+                      aria-label="Mês anterior"
+                    >
+                      &lt;
+                    </button>
+                    <h4 className="text-lg font-black gradient-text capitalize">
+                      {displayedMonthYear}
+                    </h4>
+                    <button
+                      onClick={handleNextMonth}
+                      className="p-2 rounded-xl hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all font-bold text-lg"
+                      aria-label="Próximo mês"
+                    >
+                      &gt;
+                    </button>
                   </div>
-                );
-              })
+
+                  {/* Dias da semana */}
+                  <div className="grid grid-cols-7 gap-1 text-center text-xs font-black text-muted-foreground/60 uppercase">
+                    {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"].map(d => (
+                      <div key={d} className="py-1">{d}</div>
+                    ))}
+                  </div>
+
+                  {/* Grid de dias do mês */}
+                  <div className="grid grid-cols-7 gap-2">
+                    {Array.from({ length: firstDayIndex }).map((_, i) => (
+                      <div key={`blank-${i}`} className="aspect-square" />
+                    ))}
+                    {Array.from({ length: totalDaysInMonth }).map((_, i) => {
+                      const dayNum = i + 1;
+                      const dayDate = new Date(year, month, dayNum);
+                      const dateString = dayDate.toLocaleDateString("sv-SE");
+                      const hasHistory = historyMap.has(dateString);
+                      const isSelected = selectedHistoryDay?.date === dateString;
+
+                      return (
+                        <button
+                          key={dayNum}
+                          disabled={!hasHistory}
+                          onClick={() => handleDayClick(dateString)}
+                          className={`
+                            aspect-square rounded-2xl flex flex-col items-center justify-center font-bold text-base transition-all relative
+                            ${hasHistory 
+                              ? "cursor-pointer hover:scale-105 active:scale-95 shadow-sm" 
+                              : "text-muted-foreground/30 bg-transparent cursor-default disabled:opacity-50"}
+                            ${isSelected 
+                              ? "bg-gradient-to-br from-[#ec4899] to-[#a78bfa] text-white shadow-md ring-2 ring-primary/20 scale-105" 
+                              : hasHistory 
+                                ? "bg-pink-100/60 dark:bg-pink-950/30 text-[#be185d] dark:text-pink-300 border border-pink-200/50 hover:bg-pink-200/50" 
+                                : ""}
+                          `}
+                        >
+                          <span>{dayNum}</span>
+                          {hasHistory && !isSelected && (
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#ec4899] absolute bottom-1.5" />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Detalhes do Dia Selecionado */}
+                {selectedHistoryDay ? (
+                  (() => {
+                    const formattedDate = new Date(selectedHistoryDay.date).toLocaleDateString("pt-BR", {
+                      weekday: "long",
+                      day: "2-digit",
+                      month: "2-digit",
+                      timeZone: "UTC"
+                    });
+                    const isCopied = copiedDayId === selectedHistoryDay.id;
+
+                    return (
+                      <div className="p-5 rounded-3xl glass-card border border-primary/10 space-y-4 animate-fade-in"
+                        style={{ background: isRainbow ? "rgba(255,255,255,0.4)" : "rgba(236,72,153,0.02)" }}>
+                        
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="min-w-0">
+                            <span className="text-xs font-black text-primary/70 uppercase tracking-wider block">
+                              Turno Arquivado
+                            </span>
+                            <h4 className="text-lg font-black text-foreground capitalize truncate">
+                              {formattedDate}
+                            </h4>
+                          </div>
+                          
+                          <Button
+                            onClick={() => handleCopyHistoryReport(selectedHistoryDay)}
+                            size="sm"
+                            className="rounded-full font-bold h-9 px-4 flex items-center gap-1.5 transition-all text-white border-0"
+                            style={{
+                              background: isCopied ? "linear-gradient(135deg, #10b981 0%, #059669 100%)" : "linear-gradient(135deg, #ec4899 0%, #a78bfa 100%)",
+                              boxShadow: "0 2px 8px rgba(236,72,153,0.15)",
+                            }}
+                          >
+                            {isCopied ? <Check className="w-3.5 h-3.5" /> : <Clipboard className="w-3.5 h-3.5" />}
+                            {isCopied ? "Copiado! ✧" : "Copiar"}
+                          </Button>
+                        </div>
+
+                        <div className="w-full h-px bg-primary/5" />
+
+                        <div className="space-y-2 pl-1">
+                          {selectedHistoryDay.tasks.map((task: any, idx: number) => (
+                            <div key={idx} className="flex items-start gap-2.5 text-base lg:text-sm font-semibold text-muted-foreground">
+                              <span className="text-primary mt-0.5">✓</span>
+                              <span className="text-foreground/90">{task.title}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })()
+                ) : (
+                  <div className="text-center py-8 p-4 rounded-3xl bg-primary/5 border border-dashed border-primary/20 flex flex-col items-center gap-2">
+                    <span className="text-2xl">💡</span>
+                    <p className="text-sm font-bold text-muted-foreground/80">
+                      Selecione um dia destacado com a bolinha rosa no calendário para ver os detalhes do turno!
+                    </p>
+                  </div>
+                )}
+              </div>
             )}
           </div>
 

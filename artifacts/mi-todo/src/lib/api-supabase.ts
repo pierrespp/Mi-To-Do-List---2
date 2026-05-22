@@ -335,7 +335,17 @@ export function useGetWorkspaceStats(slug: string, options?: any) {
 export function useRestartShift() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ slug, sectionId }: { slug: string; sectionId?: number }) => {
+    mutationFn: async ({
+      slug,
+      sectionId,
+      customDate,
+      resetWeeklyOnly,
+    }: {
+      slug: string;
+      sectionId?: number;
+      customDate?: string;
+      resetWeeklyOnly?: boolean;
+    }) => {
       const { data: workspace } = await supabase
         .from("workspaces")
         .select("id")
@@ -344,23 +354,53 @@ export function useRestartShift() {
       
       if (!workspace) throw new Error("Workspace not found");
 
-      // 1. Histórico: Se for reset completo (sem sectionId), capturar as tarefas concluídas ativas
+      // 1. Encontrar seções semanais para excluí-las ou incluí-las
+      const { data: weeklySections } = await supabase
+        .from("sections")
+        .select("id")
+        .eq("workspace_id", workspace.id)
+        .ilike("name", "%semanal%");
+
+      const weeklyIds = weeklySections ? weeklySections.map(s => s.id) : [];
+
+      // Caso especial: Reiniciar apenas as tarefas semanais
+      if (resetWeeklyOnly) {
+        if (weeklyIds.length > 0) {
+          await supabase
+            .from("tasks")
+            .update({ completed: false })
+            .eq("workspace_id", workspace.id)
+            .eq("archived", false)
+            .in("section_id", weeklyIds);
+        }
+        return { success: true };
+      }
+
+      // 1. Histórico: Se for reset completo (sem sectionId), capturar as tarefas concluídas ativas (ignorando semanais)
       if (sectionId === undefined) {
-        const { data: completedTasks } = await supabase
+        let completedQuery = supabase
           .from("tasks")
-          .select("title, completed_at, created_at")
+          .select("title, completed_at, created_at, section_id")
           .eq("workspace_id", workspace.id)
           .eq("completed", true)
           .eq("archived", false);
+        
+        if (weeklyIds.length > 0) {
+          completedQuery = completedQuery.not("section_id", "in", `(${weeklyIds.join(",")})`);
+        }
+
+        const { data: completedTasks } = await completedQuery;
 
         if (completedTasks && completedTasks.length > 0) {
-          // Agrupar por data (YYYY-MM-DD)
+          // Agrupar por data (YYYY-MM-DD) ou usar customDate informada
           const groups: Record<string, { title: string; completedAt: string }[]> = {};
           
           for (const t of completedTasks) {
-            const dateStr = t.completed_at 
-              ? t.completed_at.split('T')[0] 
-              : (t.created_at ? t.created_at.split('T')[0] : new Date().toISOString().split('T')[0]);
+            const dateStr = customDate 
+              ? customDate 
+              : (t.completed_at 
+                ? t.completed_at.split('T')[0] 
+                : (t.created_at ? t.created_at.split('T')[0] : new Date().toISOString().split('T')[0]));
             
             if (!groups[dateStr]) {
               groups[dateStr] = [];
@@ -424,10 +464,13 @@ export function useRestartShift() {
 
       if (sectionId !== undefined) {
         updateQuery = updateQuery.eq("section_id", sectionId);
+      } else if (weeklyIds.length > 0) {
+        // Ignorar tarefas semanais no reset de turno completo
+        updateQuery = updateQuery.not("section_id", "in", `(${weeklyIds.join(",")})`);
       }
       await updateQuery;
 
-      // 3. Turno: Se for reset completo (sem sectionId), criar novo turno e associar tarefas ativas
+      // 3. Turno: Se for reset completo (sem sectionId), criar novo turno e associar tarefas ativas (ignorando semanais)
       if (sectionId === undefined) {
         const { data: shift, error: shiftError } = await supabase
           .from("shifts")
@@ -436,11 +479,16 @@ export function useRestartShift() {
           .single();
         
         if (!shiftError && shift) {
-          await supabase
+          let associateQuery = supabase
             .from("tasks")
             .update({ shift_id: shift.id })
             .eq("workspace_id", workspace.id)
             .eq("archived", false);
+          
+          if (weeklyIds.length > 0) {
+            associateQuery = associateQuery.not("section_id", "in", `(${weeklyIds.join(",")})`);
+          }
+          await associateQuery;
         }
       }
 
@@ -550,14 +598,14 @@ export function useListDailyHistory(slug: string) {
       
       if (!workspace) return [];
 
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
       const { data, error } = await supabase
         .from("daily_history")
         .select("*")
         .eq("workspace_id", workspace.id)
-        .gte("date", sevenDaysAgo.toISOString().split('T')[0])
+        .gte("date", thirtyDaysAgo.toISOString().split('T')[0])
         .order("date", { ascending: false });
 
       if (error) throw error;
