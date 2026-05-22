@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { DangoPrideIcon, MoonPrideIcon, SunPrideIcon, HeartHandsPrideIcon } from "./KawaiiPrideIcons";
 
 interface ActionButtonsProps {
   onFeed: () => void;
@@ -17,6 +18,16 @@ interface IconBtnProps {
 }
 
 function IconBtn({ emoji, label, onClick, isKawaii }: IconBtnProps) {
+  const renderIcon = () => {
+    if (isKawaii) {
+      if (emoji === "🍡") return <DangoPrideIcon size={28} />;
+      if (emoji === "🌙") return <MoonPrideIcon size={28} />;
+      if (emoji === "☀️") return <SunPrideIcon size={28} />;
+      if (emoji === "🫶") return <HeartHandsPrideIcon size={28} />;
+    }
+    return emoji;
+  };
+
   return (
     <motion.button
       onClick={onClick}
@@ -36,7 +47,7 @@ function IconBtn({ emoji, label, onClick, isKawaii }: IconBtnProps) {
           boxShadow: isKawaii ? "0 2px 12px rgba(0,0,0,0.06)" : "none",
         }}
       >
-        {emoji}
+        {renderIcon()}
       </div>
       <span
         className="text-xs font-medium"

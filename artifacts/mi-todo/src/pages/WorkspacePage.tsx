@@ -32,6 +32,45 @@ import {
 import { useTheme } from "@/components/ThemeToggle";
 import { petBridge } from "../../../../src/integrations/petBridge";
 import {
+  DangoPrideIcon,
+  MoonPrideIcon,
+  SunPrideIcon,
+  HeartHandsPrideIcon,
+  LightningPrideIcon,
+  LeafPrideIcon,
+  SleepingPrideIcon,
+  SakuraPrideIcon,
+  SadPrideIcon,
+  RainbowPrideIcon,
+  StarPrideIcon,
+  RibbonPrideIcon,
+  CloudPrideIcon
+} from "../../../../src/pet-system/src/pet-system/components/KawaiiPrideIcons";
+
+function renderStickerIcon(emoji: string, size: number = 24) {
+  switch (emoji) {
+    case "🍡": return <DangoPrideIcon size={size} />;
+    case "🌙": return <MoonPrideIcon size={size} />;
+    case "☀️": return <SunPrideIcon size={size} />;
+    case "🫶": return <HeartHandsPrideIcon size={size} />;
+    case "⚡": return <LightningPrideIcon size={size} />;
+    case "🌿": return <LeafPrideIcon size={size} />;
+    case "😴":
+    case "💤":
+    case "😮‍💨": return <SleepingPrideIcon size={size} />;
+    case "🌸": return <SakuraPrideIcon size={size} />;
+    case "🥺": return <SadPrideIcon size={size} />;
+    case "🌈": return <RainbowPrideIcon size={size} />;
+    case "⭐":
+    case "🌟": return <StarPrideIcon size={size} />;
+    case "🎀": return <RibbonPrideIcon size={size} />;
+    case "☁️": return <CloudPrideIcon size={size} />;
+    case "💖":
+    case "💝": return <HeartHandsPrideIcon size={size} />;
+    default: return <span>{emoji}</span>;
+  }
+}
+import {
   DndContext,
   closestCenter,
   KeyboardSensor,
@@ -60,105 +99,60 @@ const PALETTES = [
   { bg: "rgba(249,168,212,0.22)", border: "rgba(249,168,212,0.5)", text: "#be185d", glow: "rgba(249,168,212,0.45)" },
 ];
 
-/* ─── Main bunny mascot ───────────────────────────────────────── */
+/* ─── Main frog mascot ────────────────────────────────────────── */
 function KawaiiMascot({ size = 96, mood = "happy" }: { size?: number; mood?: "happy" | "idle" | "cheer" }) {
+  const src = mood === "cheer" ? "/mascote_cheer.png" : "/mascote_idle.png";
   return (
-    <svg width={size} height={size * 1.15} viewBox="0 0 120 138" fill="none" xmlns="http://www.w3.org/2000/svg"
-      style={{ filter: "drop-shadow(0 4px 16px rgba(236,72,153,0.3))" }}>
-      <ellipse cx="37" cy="38" rx="14" ry="26" fill="#f9c8d9" />
-      <ellipse cx="37" cy="38" rx="8" ry="18" fill="#f7a8c4" />
-      <ellipse cx="83" cy="38" rx="14" ry="26" fill="#f9c8d9" />
-      <ellipse cx="83" cy="38" rx="8" ry="18" fill="#f7a8c4" />
-      <ellipse cx="60" cy="88" rx="44" ry="44" fill="#fff5f8" />
-      <ellipse cx="60" cy="88" rx="44" ry="44" fill="url(#bunnyGrad)" />
-      <circle cx="45" cy="81" r="7" fill="#1a0033" />
-      <circle cx="75" cy="81" r="7" fill="#1a0033" />
-      <circle cx="47" cy="79" r="2.5" fill="white" />
-      <circle cx="77" cy="79" r="2.5" fill="white" />
-      <ellipse cx="34" cy="91" rx="9" ry="5.5" fill="#f9a8d4" opacity="0.55" />
-      <ellipse cx="86" cy="91" rx="9" ry="5.5" fill="#f9a8d4" opacity="0.55" />
-      <ellipse cx="60" cy="94" rx="4" ry="3" fill="#e87dab" />
-      {mood === "cheer" ? (
-        <path d="M 52 100 Q 60 110 68 100" stroke="#e87dab" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-      ) : (
-        <path d="M 54 100 Q 60 107 66 100" stroke="#e87dab" strokeWidth="2" fill="none" strokeLinecap="round" />
-      )}
-      <text x="94" y="62" fontSize="14" fill="#f9a8d4" opacity="0.9">✦</text>
-      <text x="10" y="60" fontSize="10" fill="#c4b5fd" opacity="0.8">✦</text>
-      {mood === "cheer" && (
-        <>
-          <text x="96" y="88" fontSize="13" fill="#fde68a">⭐</text>
-          <text x="8" y="85" fontSize="11" fill="#f9a8d4">✨</text>
-        </>
-      )}
-      <defs>
-        <radialGradient id="bunnyGrad" cx="50%" cy="45%" r="60%">
-          <stop offset="0%" stopColor="#fff5f8" />
-          <stop offset="100%" stopColor="#fce7f3" />
-        </radialGradient>
-      </defs>
-    </svg>
+    <img
+      src={src}
+      alt="Mascote Sapo Kawaii"
+      width={size}
+      height={size}
+      style={{
+        objectFit: "contain",
+        filter: "drop-shadow(0 4px 16px rgba(100,200,100,0.3))",
+        transition: "transform 0.3s ease",
+      }}
+    />
   );
 }
 
 /* ─── Mini kawaii star character ──────────────────────────────── */
 function StarKawaii({ size = 44 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <polygon points="30,4 36,22 55,22 41,33 46,51 30,40 14,51 19,33 5,22 24,22"
-        fill="#fde68a" stroke="#fbbf24" strokeWidth="1.5" strokeLinejoin="round" />
-      <circle cx="24" cy="27" r="3" fill="#1a0033" />
-      <circle cx="36" cy="27" r="3" fill="#1a0033" />
-      <circle cx="25" cy="26" r="1.2" fill="white" />
-      <circle cx="37" cy="26" r="1.2" fill="white" />
-      <ellipse cx="19" cy="32" rx="4" ry="2.5" fill="#f9a8d4" opacity="0.5" />
-      <ellipse cx="41" cy="32" rx="4" ry="2.5" fill="#f9a8d4" opacity="0.5" />
-      <path d="M 25 34 Q 30 39 35 34" stroke="#f59e0b" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-    </svg>
+    <img
+      src="/kawaii_star.png"
+      alt="Estrela Kawaii"
+      width={size}
+      height={size}
+      style={{ objectFit: "contain" }}
+    />
   );
 }
 
 /* ─── Mini kawaii cloud character ─────────────────────────────── */
 function CloudKawaii({ size = 52 }: { size?: number }) {
   return (
-    <svg width={size} height={size * 0.7} viewBox="0 0 80 55" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="40" cy="37" rx="32" ry="17" fill="white" />
-      <ellipse cx="26" cy="29" rx="16" ry="14" fill="white" />
-      <ellipse cx="50" cy="25" rx="19" ry="16" fill="white" />
-      <ellipse cx="40" cy="37" rx="32" ry="17" fill="rgba(196,181,253,0.3)" />
-      <ellipse cx="26" cy="29" rx="16" ry="14" fill="rgba(196,181,253,0.2)" />
-      <ellipse cx="50" cy="25" rx="19" ry="16" fill="rgba(249,168,212,0.2)" />
-      <circle cx="33" cy="35" r="3" fill="#1a0033" />
-      <circle cx="47" cy="35" r="3" fill="#1a0033" />
-      <circle cx="34" cy="34" r="1.2" fill="white" />
-      <circle cx="48" cy="34" r="1.2" fill="white" />
-      <path d="M 35 41 Q 40 46 45 41" stroke="#a78bfa" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-    </svg>
+    <img
+      src="/kawaii_cloud.png"
+      alt="Nuvem Kawaii"
+      width={size}
+      height={size}
+      style={{ objectFit: "contain" }}
+    />
   );
 }
 
 /* ─── Mini kawaii heart character ─────────────────────────────── */
 function HeartKawaii({ size = 44 }: { size?: number }) {
   return (
-    <svg width={size} height={size * 0.95} viewBox="0 0 60 57" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M30 52 C6 37 4 10 20 8 C25 7 30 14 30 14 C30 14 35 7 40 8 C56 10 54 37 30 52Z"
-        fill="#fda4af" stroke="#fb7185" strokeWidth="1.5" />
-      <path d="M30 52 C6 37 4 10 20 8 C25 7 30 14 30 14 C30 14 35 7 40 8 C56 10 54 37 30 52Z"
-        fill="url(#heartGrad)" />
-      <circle cx="23" cy="25" r="3" fill="#1a0033" />
-      <circle cx="37" cy="25" r="3" fill="#1a0033" />
-      <circle cx="24" cy="24" r="1.2" fill="white" />
-      <circle cx="38" cy="24" r="1.2" fill="white" />
-      <ellipse cx="17" cy="30" rx="4" ry="2.5" fill="#fff" opacity="0.45" />
-      <ellipse cx="43" cy="30" rx="4" ry="2.5" fill="#fff" opacity="0.45" />
-      <path d="M 25 33 Q 30 38 35 33" stroke="#ec4899" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-      <defs>
-        <linearGradient id="heartGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="rgba(253,164,175,0.5)" />
-          <stop offset="100%" stopColor="rgba(251,113,133,0.2)" />
-        </linearGradient>
-      </defs>
-    </svg>
+    <img
+      src="/kawaii_heart.png"
+      alt="Coração Kawaii"
+      width={size}
+      height={size}
+      style={{ objectFit: "contain" }}
+    />
   );
 }
 
@@ -235,22 +229,23 @@ function ProgressRing({ value, total, size = 72 }: { value: number; total: numbe
 }
 
 /* ─── Enhanced Blob + Sticker Background ─────────────────────── */
-const STICKERS = [
-  { emoji: "🌸", top: "7%", right: "4%", size: 30, opacity: 0.28, anim: "drift 7s ease-in-out infinite", delay: "0s", blur: "0.5px" },
-  { emoji: "☁️", top: "18%", left: "2%", size: 28, opacity: 0.22, anim: "floatUp 8s ease-in-out infinite", delay: "1.2s", blur: "1px" },
-  { emoji: "💖", top: "42%", right: "2%", size: 26, opacity: 0.26, anim: "sway 5s ease-in-out infinite", delay: "0.5s", blur: "0.5px" },
-  { emoji: "🎀", top: "65%", left: "1.5%", size: 28, opacity: 0.22, anim: "drift 9s ease-in-out infinite", delay: "2s", blur: "1px" },
-  { emoji: "⭐", top: "78%", right: "5%", size: 24, opacity: 0.3, anim: "twinkle 4s ease-in-out infinite", delay: "1.5s", blur: "0" },
-  { emoji: "✨", top: "28%", left: "3%", size: 22, opacity: 0.25, anim: "sparkBurst 3.5s ease-in-out infinite", delay: "0.8s", blur: "0" },
-  { emoji: "🌈", top: "88%", right: "10%", size: 32, opacity: 0.18, anim: "floatUp 11s ease-in-out infinite", delay: "3s", blur: "1px" },
-  { emoji: "🦋", top: "55%", left: "2%", size: 24, opacity: 0.2, anim: "sway 6s ease-in-out infinite", delay: "1s", blur: "0.5px" },
-  { emoji: "🌟", top: "12%", left: "30%", size: 20, opacity: 0.18, anim: "twinkle 5s ease-in-out infinite", delay: "2.5s", blur: "0" },
-  { emoji: "💫", top: "50%", right: "8%", size: 20, opacity: 0.22, anim: "orbit 8s linear infinite", delay: "0s", blur: "0" },
-  { emoji: "🌺", top: "33%", right: "6%", size: 22, opacity: 0.2, anim: "drift 10s ease-in-out infinite", delay: "4s", blur: "1px" },
-  { emoji: "💝", top: "72%", left: "5%", size: 22, opacity: 0.22, anim: "floatUp 6s ease-in-out infinite", delay: "0.3s", blur: "0" },
+const STICKER_ASSETS = [
+  { src: "/kawaii_mini_flower.png", top: "7%", right: "4%", size: 30, opacity: 0.35, anim: "drift 7s ease-in-out infinite", delay: "0s" },
+  { src: "/kawaii_cloud.png", top: "18%", left: "2%", size: 34, opacity: 0.3, anim: "floatUp 8s ease-in-out infinite", delay: "1.2s" },
+  { src: "/kawaii_heart.png", top: "42%", right: "2%", size: 28, opacity: 0.35, anim: "sway 5s ease-in-out infinite", delay: "0.5s" },
+  { src: "/kawaii_mini_butterfly.png", top: "55%", left: "2%", size: 26, opacity: 0.32, anim: "sway 6s ease-in-out infinite", delay: "1.0s" },
+  { src: "/kawaii_mini_rainbow.png", top: "88%", right: "10%", size: 36, opacity: 0.3, anim: "floatUp 11s ease-in-out infinite", delay: "3s" },
+  { src: "/kawaii_mini_star.png", top: "78%", right: "5%", size: 24, opacity: 0.4, anim: "twinkle 4s ease-in-out infinite", delay: "1.5s" },
+  { src: "/kawaii_star.png", top: "12%", left: "30%", size: 30, opacity: 0.32, anim: "twinkle 5s ease-in-out infinite", delay: "2.5s" },
+  { src: "/kawaii_cat.png", top: "65%", left: "1.5%", size: 36, opacity: 0.35, anim: "drift 9s ease-in-out infinite", delay: "2s" },
+  { src: "/kawaii_cupcake.png", top: "33%", right: "6%", size: 34, opacity: 0.3, anim: "drift 10s ease-in-out infinite", delay: "4s" },
+  { src: "/kawaii_moon.png", top: "28%", left: "3%", size: 32, opacity: 0.35, anim: "floatUp 8s ease-in-out infinite", delay: "0.8s" },
 ];
 
 function BlobBackground() {
+  const { theme } = useTheme();
+  const isRainbow = theme === "rainbow";
+
   return (
     <div className="blob-bg" style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden" }}>
       {/* Primary blobs */}
@@ -287,19 +282,34 @@ function BlobBackground() {
       }} />
 
       {/* Floating stickers */}
-      {STICKERS.filter((_, i) => (typeof window !== 'undefined' && window.innerWidth < 1024) ? i % 2 === 0 : true).map((s, i) => (
-        <div key={i} style={{
-          position: "absolute",
-          top: s.top,
-          ...(s.left ? { left: s.left } : { right: s.right }),
-          fontSize: s.size,
-          opacity: s.opacity,
-          filter: `blur(${s.blur})`,
-          animation: s.anim,
-          animationDelay: s.delay,
-          lineHeight: 1,
-          userSelect: "none",
-        }}>{s.emoji}</div>
+      {isRainbow && STICKER_ASSETS.map((s, idx) => (
+        <div
+          key={idx}
+          style={{
+            position: "absolute",
+            top: s.top,
+            left: s.left,
+            right: s.right,
+            width: s.size,
+            height: s.size,
+            opacity: s.opacity,
+            animation: s.anim,
+            animationDelay: s.delay,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <img
+            src={s.src}
+            alt="sticker"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "contain",
+            }}
+          />
+        </div>
       ))}
 
       {/* Soft glow behind main content */}
@@ -364,18 +374,29 @@ function KawaiiCornerDecos() {
 /* ─── Sidebar accent stickers ────────────────────────────────── */
 function SidebarStickers() {
   const items = [
-    { emoji: "🌸", top: 10, right: 10, size: 20, anim: "twinkle 4s ease-in-out infinite", delay: "0s" },
-    { emoji: "✨", top: 38, right: 16, size: 14, anim: "sparkBurst 3s ease-in-out infinite", delay: "0.5s" },
-    { emoji: "💫", top: 60, right: 8, size: 16, anim: "floatUp 5s ease-in-out infinite", delay: "1s" },
+    { src: "/kawaii_mini_flower.png", top: 10, right: 10, size: 22, anim: "twinkle 4s ease-in-out infinite", delay: "0s" },
+    { src: "/kawaii_mini_star.png", top: 38, right: 16, size: 16, anim: "sparkBurst 3s ease-in-out infinite", delay: "0.5s" },
+    { src: "/kawaii_mini_butterfly.png", top: 60, right: 8, size: 18, anim: "floatUp 5s ease-in-out infinite", delay: "1s" },
   ];
   return (
     <div className="blob-bg" style={{ position: "absolute", top: 0, right: 0, width: 40, height: 90, pointerEvents: "none" }}>
       {items.map((it, i) => (
-        <div key={i} style={{
-          position: "absolute", top: it.top, right: it.right,
-          fontSize: it.size, opacity: 0.45,
-          animation: it.anim, animationDelay: it.delay,
-        }}>{it.emoji}</div>
+        <img
+          key={i}
+          src={it.src}
+          alt="Sidebar Deco"
+          style={{
+            position: "absolute",
+            top: it.top,
+            right: it.right,
+            width: it.size,
+            height: it.size,
+            opacity: 0.5,
+            animation: it.anim,
+            animationDelay: it.delay,
+            objectFit: "contain",
+          }}
+        />
       ))}
     </div>
   );
@@ -656,6 +677,7 @@ export default function WorkspacePage() {
 
   const [selectedSectionId, setSelectedSectionId] = useState<number | null>(null);
   const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [isInputFocused, setIsInputFocused] = useState(false);
   const [newSectionName, setNewSectionName] = useState("");
   const [isAddingSection, setIsAddingSection] = useState(false);
   const [completingId, setCompletingId] = useState<number | null>(null);
@@ -891,6 +913,20 @@ export default function WorkspacePage() {
 
         {/* Workspace name */}
         <div className="mb-6">
+          {/* Sleepy Moon decoration for Turno Noite */}
+          {workspace?.name?.toLowerCase().includes("noite") && (
+            <div className="flex pl-7 mb-2">
+              <img
+                src="/kawaii_moon.png"
+                alt="Lua de Orgulho"
+                className="w-12 h-12 object-contain"
+                style={{
+                  filter: "drop-shadow(0 2px 6px rgba(167,139,250,0.35))",
+                  animation: "sway 5s ease-in-out infinite",
+                }}
+              />
+            </div>
+          )}
           <div className="flex items-center gap-2 mb-1">
             <Heart className="w-5 h-5 fill-primary text-primary flex-shrink-0"
               style={{ filter: isRainbow ? "drop-shadow(0 0 6px rgba(236,72,153,0.5))" : undefined }} />
@@ -905,7 +941,7 @@ export default function WorkspacePage() {
                   animation: `floatUp ${3 + i * 0.5}s ease-in-out infinite`,
                   animationDelay: `${i * 0.25}s`,
                   display: "inline-block",
-                }}>{s}</span>
+                }}>{renderStickerIcon(s, 16)}</span>
               ))}
             </div>
           )}
@@ -1027,25 +1063,31 @@ export default function WorkspacePage() {
         </div>
 
         {/* Sidebar mascot — reacts when a task is completed */}
-        {isRainbow && (
-          <div className="flex flex-col items-center gap-2 mt-4 mb-2">
-            <div
-              className="float-animation"
-              style={{
-                opacity: 0.82,
-                transition: "transform 0.3s cubic-bezier(0.34,1.56,0.64,1)",
-                transform: mascotMood === "cheer" ? "scale(1.18) translateY(-4px)" : "scale(1)",
-              }}
-            >
-              <KawaiiMascot size={52} mood={mascotMood} />
+        {isRainbow && (() => {
+          const isFinished = stats && stats.completed === stats.total && stats.total > 0;
+          const currentMascotMood = isFinished || isInputFocused ? "cheer" : mascotMood;
+          return (
+            <div className="flex flex-col items-center gap-2 mt-4 mb-2">
+              <div
+                className="float-animation"
+                style={{
+                  opacity: 0.82,
+                  transition: "transform 0.3s cubic-bezier(0.34,1.56,0.64,1)",
+                  transform: currentMascotMood === "cheer" ? "scale(1.18) translateY(-4px)" : "scale(1)",
+                }}
+              >
+                <KawaiiMascot size={52} mood={currentMascotMood} />
+              </div>
+              <div className="flex gap-1 text-base" style={{ opacity: 0.4 }}>
+                {["💜", "🌸", "💜"].map((s, i) => (
+                  <span key={i} style={{ animation: `twinkle ${3 + i}s ease-in-out infinite`, animationDelay: `${i * 0.4}s`, display: "inline-block" }}>
+                    {s === "🌸" ? renderStickerIcon(s, 16) : s}
+                  </span>
+                ))}
+              </div>
             </div>
-            <div className="flex gap-1 text-base" style={{ opacity: 0.4 }}>
-              {["💜", "🌸", "💜"].map((s, i) => (
-                <span key={i} style={{ animation: `twinkle ${3 + i}s ease-in-out infinite`, animationDelay: `${i * 0.4}s`, display: "inline-block" }}>{s}</span>
-              ))}
-            </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* Reiniciar Turno */}
         <div className="pt-4 mt-auto">
@@ -1091,6 +1133,8 @@ export default function WorkspacePage() {
           <div className="relative">
             <Input value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)}
               onKeyDown={handleCreateTask}
+              onFocus={() => setIsInputFocused(true)}
+              onBlur={() => setIsInputFocused(false)}
               placeholder="O que vamos fazer hoje? ✨"
               className="h-16 pl-6 pr-12 text-xl rounded-full glass-card border-primary/20 shadow-md focus-visible:ring-primary focus-visible:ring-2 font-semibold placeholder:text-muted-foreground/60"
               style={isRainbow ? { boxShadow: "0 4px 20px rgba(236,72,153,0.15), 0 2px 8px rgba(167,139,250,0.1)" } : undefined}
@@ -1108,7 +1152,7 @@ export default function WorkspacePage() {
                 <div style={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "flex-end", height: 160, width: "100%" }}>
                   {isRainbow && <RainbowArc />}
                   <div className="bounce-in" style={{ position: "relative", zIndex: 2 }}>
-                    <KawaiiMascot size={130} mood="idle" />
+                    <KawaiiMascot size={130} mood={stats && stats.completed === stats.total && stats.total > 0 ? "cheer" : "idle"} />
                   </div>
                   {/* Orbiting stars */}
                   {isRainbow && (
@@ -1120,8 +1164,11 @@ export default function WorkspacePage() {
                           animation: `orbit ${5 + i}s linear infinite`,
                           animationDelay: `${i * -1.5}s`,
                           marginLeft: -8, marginBottom: -8,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center"
                         }}>
-                          {["⭐", "✨", "💖"][i]}
+                          {renderStickerIcon(["⭐", "✨", "💖"][i], 18)}
                         </div>
                       ))}
                     </>
@@ -1142,7 +1189,7 @@ export default function WorkspacePage() {
                         animation: `floatUp ${2.5 + i * 0.35}s ease-in-out infinite`,
                         animationDelay: `${i * 0.28}s`,
                         display: "inline-block",
-                      }}>{s}</span>
+                      }}>{renderStickerIcon(s, 24)}</span>
                     ))}
                   </div>
                 )}

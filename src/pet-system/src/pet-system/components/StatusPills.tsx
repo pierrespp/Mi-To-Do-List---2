@@ -1,4 +1,13 @@
 import React from "react";
+import {
+  LightningPrideIcon,
+  LeafPrideIcon,
+  SleepingPrideIcon,
+  SakuraPrideIcon,
+  SadPrideIcon,
+  SunPrideIcon,
+  CloudPrideIcon
+} from "./KawaiiPrideIcons";
 
 interface StatusPillsProps {
   happiness: number;
@@ -30,6 +39,19 @@ interface PillProps {
 }
 
 function Pill({ emoji, label, bg, text, isKawaii }: PillProps) {
+  const renderIcon = () => {
+    if (isKawaii) {
+      if (emoji === "⚡") return <LightningPrideIcon size={18} />;
+      if (emoji === "🌿") return <LeafPrideIcon size={18} />;
+      if (emoji === "😮‍💨" || emoji === "😴" || emoji === "💤") return <SleepingPrideIcon size={18} />;
+      if (emoji === "🌸") return <SakuraPrideIcon size={18} />;
+      if (emoji === "🥺") return <SadPrideIcon size={18} />;
+      if (emoji === "☀️") return <SunPrideIcon size={18} />;
+      if (emoji === "🌤") return <CloudPrideIcon size={18} />;
+    }
+    return emoji;
+  };
+
   return (
     <div
       className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap"
@@ -41,7 +63,7 @@ function Pill({ emoji, label, bg, text, isKawaii }: PillProps) {
         WebkitBackdropFilter: "blur(8px)",
       }}
     >
-      <span>{emoji}</span>
+      <span className="flex items-center justify-center">{renderIcon()}</span>
       <span>{label}</span>
     </div>
   );
