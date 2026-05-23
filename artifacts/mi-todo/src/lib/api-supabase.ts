@@ -359,7 +359,7 @@ export function useRestartShift() {
         .from("sections")
         .select("id")
         .eq("workspace_id", workspace.id)
-        .ilike("name", "%semanal%");
+        .ilike("name", "%semana%");
 
       const weeklyIds = weeklySections ? weeklySections.map(s => s.id) : [];
 
