@@ -31,6 +31,8 @@ import {
 } from "@/components/ui/dialog";
 import { useTheme } from "@/components/ThemeToggle";
 import MusicPlayer from "@/components/MusicPlayer";
+import TimerPanel from "@/components/TimerPanel";
+import { useTimerStore } from "@/hooks/useTimerStore";
 import { petBridge } from "../../../../src/integrations/petBridge";
 import {
   DangoPrideIcon,
@@ -760,7 +762,7 @@ export default function WorkspacePage() {
   };
 
   const [selectedSectionId, setSelectedSectionId] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<"tasks" | "music">("tasks");
+  const [activeTab, setActiveTab] = useState<"tasks" | "music" | "timer">("tasks");
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [newSectionName, setNewSectionName] = useState("");
@@ -883,6 +885,14 @@ export default function WorkspacePage() {
       hasGreeted.current = true;
     }
   }, []); // Mount only
+
+  const tick = useTimerStore((s) => s.tick);
+  useEffect(() => {
+    const clockInterval = setInterval(() => {
+      tick();
+    }, 1000);
+    return () => clearInterval(clockInterval);
+  }, [tick]);
 
   const quote = QUOTES[Math.floor(Date.now() / 86400000) % QUOTES.length];
   const sectionMap = new Map((sections ?? []).map((s, i) => [s.id, { ...s, palette: PALETTES[i % PALETTES.length] }]));
@@ -1225,6 +1235,28 @@ export default function WorkspacePage() {
             Música
           </button>
 
+          <button onClick={() => { setActiveTab("timer"); setDrawerOpen(false); }}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-left font-bold transition-all mt-1"
+            style={activeTab === "timer" ? {
+              background: "linear-gradient(135deg, #ec4899, #a78bfa)",
+              color: "white",
+              boxShadow: isRainbow ? "0 4px 16px rgba(236,72,153,0.35)" : "0 2px 10px rgba(236,72,153,0.2)",
+              transform: "scale(1.03)",
+            } : { color: "var(--color-muted-foreground)" }}
+            onMouseEnter={e => { if (activeTab !== "timer") (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.5)"; }}
+            onMouseLeave={e => { if (activeTab !== "timer") (e.currentTarget as HTMLElement).style.background = "transparent"; }}>
+            <img
+              src={`${import.meta.env.BASE_URL}kawaii_moon_icon.png`}
+              alt="Alarmes & Timer"
+              className="w-10 h-10 object-contain flex-shrink-0"
+              style={{
+                filter: activeTab === "timer" ? "brightness(0) invert(1)" : "none",
+                transition: "filter 0.2s ease"
+              }}
+            />
+            Alarmes & Timer
+          </button>
+
           {/* Botões de Ações de Reiniciar Integrados */}
           <div className="pt-2 border-t border-primary/10 mt-2 space-y-1">
             <button
@@ -1501,6 +1533,11 @@ export default function WorkspacePage() {
           {/* Aba de Música (Keep-Alive via CSS hiding para evitar parar música no background) */}
           <div className={activeTab === "music" ? "animate-fade-in" : "hidden"}>
             <MusicPlayer />
+          </div>
+
+          {/* Aba de Alarmes & Timer */}
+          <div className={activeTab === "timer" ? "animate-fade-in" : "hidden"}>
+            <TimerPanel />
           </div>
         </div>
       </div>
