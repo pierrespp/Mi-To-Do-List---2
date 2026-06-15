@@ -48,7 +48,7 @@ import {
   StarPrideIcon,
   RibbonPrideIcon,
   CloudPrideIcon
-} from "../../../../src/pet-system/src/pet-system/components/KawaiiPrideIcons";
+} from "../components/KawaiiPrideIcons";
 
 function renderStickerIcon(emoji: string, size: number = 24) {
   switch (emoji) {
